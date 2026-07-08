@@ -307,3 +307,17 @@
                     <button class="ios-btn" style="width:auto; padding:0 14px;" onclick="pridatDoDb('cvik')">+</button>
                 </div>
                 <div id="settings-cviky-list" style="display:flex; flex-direction:column; gap:4px; max-height:120px; overflow-y:auto; margin-top:6px;"></div>
+            </div>
+
+            <div class="ios-card">
+                <span style="font-size:13px; font-weight:600;">Správa posiloven skupiny</span>
+                <div style="display:flex; gap:6px; margin-top:4px;">
+                    <input type="text" id="add-gym-inp" class="ios-input" placeholder="Nová gym..." style="padding:8px;">
+                    <button class="ios-btn" style="width:auto; padding:0 14px;" onclick="pridatDoDb('gym')">+</button>
+                </div>
+                <div id="settings-gyms-list" style="display:flex; flex-direction:column; gap:4px; max-height:120px; overflow-y:auto; margin-top:6px;"></div>
+            </div>
+
+            <button class="ios-btn" onclick="syncSGoogleSheets()">🔄 Synchronizovat Cloud</button>
+            <button class="ios-btn ios-btn-sub" onclick="exportDoCSV()">📤 Exportovat data (.csv)</button>
+            <button class="ios-btn ios-btn
