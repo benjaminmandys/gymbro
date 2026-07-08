@@ -320,4 +320,30 @@
 
             <button class="ios-btn" onclick="syncSGoogleSheets()">🔄 Synchronizovat Cloud</button>
             <button class="ios-btn ios-btn-sub" onclick="exportDoCSV()">📤 Exportovat data (.csv)</button>
-            <button class="ios-btn ios-btn
+            <button class="ios-btn ios-btn-sub" onclick="document.getElementById('import-file-trigger').click()">📥 Nahrát zálohu ze souboru</button>
+            <input type="file" id="import-file-trigger" class="hidden" accept=".csv" onchange="importZCSV(this)">
+        </div>
+    </div>
+
+    <div id="page-week" class="page">
+        <div class="page-header">
+            <h1 class="page-title">Historie tréninků</h1>
+            <button class="back-btn" onclick="closePage('page-week')">Zavřít</button>
+        </div>
+        <div class="page-content" id="history-box"></div>
+    </div>
+
+    <div id="page-live" class="page">
+        <div class="page-header">
+            <h1 class="page-title" id="live-main-title">Trénink</h1>
+            <button class="back-btn" onclick="stornovatNeboZavritWorkout()">Zavřít</button>
+        </div>
+        <div class="page-content">
+            
+            <div id="w-setup-zone" style="display:flex; flex-direction:column; gap:12px;">
+                <div>
+                    <label style="font-size:11px; color:var(--text-secondary);">Datum tréninku</label>
+                    <input type="date" id="w-date-field" class="ios-input">
+                </div>
+                <div>
+                    <label style="
