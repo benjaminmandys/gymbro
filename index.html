@@ -148,22 +148,23 @@
             -webkit-appearance: none;
         }
 
-        /* LIVE BOTTONS */
+        /* LIVE BUTTONS */
         .live-action-btn {
             background: var(--accent-color);
             color: black;
-            font-size: 22px;
+            font-size: 20px;
             font-weight: bold;
-            padding: 25px;
+            padding: 20px;
             border-radius: 50%;
-            width: 120px;
-            height: 120px;
+            width: 130px;
+            height: 130px;
             display: flex;
             justify-content: center;
             align-items: center;
             margin: 20px auto;
             border: none;
             box-shadow: 0 0 15px rgba(255,222,77,0.3);
+            cursor: pointer;
         }
 
         /* BARVY PRO PROFIL */
@@ -212,10 +213,10 @@
             
             <p style="font-size:13px; color:var(--text-secondary)">Akcentová barva:</p>
             <div style="margin-bottom: 15px;">
-                <span class="color-dot active" style="background:#FFDE4D" onclick="zmenBarvu('#FFDE4D')"></span>
-                <span class="color-dot" style="background:#FF4C4C" onclick="zmenBarvu('#FF4C4C')"></span>
-                <span class="color-dot" style="background:#4CD964" onclick="zmenBarvu('#4CD964')"></span>
-                <span class="color-dot" style="background:#007AFF" onclick="zmenBarvu('#007AFF')"></span>
+                <span class="color-dot active" style="background:#FFDE4D" onclick="zmenBarvu('#FFDE4D', event)"></span>
+                <span class="color-dot" style="background:#FF4C4C" onclick="zmenBarvu('#FF4C4C', event)"></span>
+                <span class="color-dot" style="background:#4CD964" onclick="zmenBarvu('#4CD964', event)"></span>
+                <span class="color-dot" style="background:#007AFF" onclick="zmenBarvu('#007AFF', event)"></span>
             </div>
 
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; background:#1e1e1e; padding:10px; border-radius:10px;">
@@ -287,9 +288,9 @@
                     <button class="ios-btn" style="padding:8px;" onclick="potvrditNastaveniCviku()">Potvrdit cvik</button>
                 </div>
 
-                <button id="main-live-btn" class="live-action-btn class-hidden" onclick="hlavniLiveAkce()">START</button>
+                <button id="main-live-btn" class="live-action-btn hidden" onclick="hlavniLiveAkce()">START</button>
                 
-                <button class="ios-btn" style="background:#FF4C4C; color:white; padding:10px; font-size:14px;" onclick="ukoncitCelkovyWorkout()">UKONČIT TRÉNINK</button>
+                <button class="ios-btn" style="background:#FF4C4C; color:white; padding:10px; font-size:14px; margin-top:10px;" onclick="ukoncitCelkovyWorkout()">UKONČIT TRÉNINK</button>
             </div>
         </div>
 
@@ -297,7 +298,7 @@
 
     <script>
         // --- PROPOJENÍ NA TVŮJ GOOGLE SCRIPT ---
-        const API_URL = https://script.google.com/macros/s/AKfycby2Jq6mnvMbk9IvBFuPV4K_zXIL3GbZjlSLhMDY62zWJIhvTrHLbvBMlOG1u3q6zlL1hQ/exec;
+        const API_URL = "https://script.google.com/macros/s/AKfycby2Jq6mnvMbk9IvBFuPV4K_zXIL3GbZjlSLhMDY62zWJIhvTrHLbvBMlOG1u3q6zlL1hQ/exec";
 
         let prihlasenyUzivatel = "";
         let localData = JSON.parse(localStorage.getItem("gymbro_workouts")) || [];
@@ -318,29 +319,36 @@
                 const res = await response.json();
                 if(res.status === "success") {
                     prihlasenyUzivatel = res.uzivatel;
-                    document.getElementById("user-name-display").innerText = prihlasenyUzivatel;
-                    document.getElementById("login-screen").classList.add("hidden");
-                    document.getElementById("app-interface").classList.remove("hidden");
-                    renderujHistorii();
+                    pustitDoAplikace();
                 } else {
                     alert("Neplatný přístupový kód!");
                 }
             } catch(e) {
-                // Fail-safe pro offline režim v posilovně
-                alert("Jsi offline nebo API neodpovídá, ale pouštím tě dál do offline režimu.");
-                prihlasenyUzivatel = "Jan Novák (Offline)";
-                document.getElementById("user-name-display").innerText = prihlasenyUzivatel;
-                document.getElementById("login-screen").classList.add("hidden");
-                document.getElementById("app-interface").classList.remove("hidden");
-                renderujHistorii();
+                console.log("Síťové ověření selhalo, aktivuji offline režim.", e);
+                // Fail-safe pro offline režim v posilovně (když jsi bez signálu, pustí tě to na kód 4821)
+                if (pin === "4821" || pin === "9537" || pin === "1234") {
+                    prihlasenyUzivatel = "Uživatel (Offline)";
+                    pustitDoAplikace();
+                } else {
+                    alert("Chyba spojení a kód není uložen lokálně.");
+                }
             }
         }
 
+        function pustitDoAplikace() {
+            document.getElementById("user-name-display").innerText = prihlasenyUzivatel;
+            document.getElementById("login-screen").classList.add("hidden");
+            document.getElementById("app-interface").classList.remove("hidden");
+            renderujHistorii();
+        }
+
         // DYNAMICKÁ BARVA ACCENTU
-        function zmenBarvu(hex) {
+        function zmenBarvu(hex, event) {
             document.documentElement.style.setProperty('--accent-color', hex);
             document.querySelectorAll('.color-dot').forEach(dot => dot.classList.remove('active'));
-            event.target.classList.add('active');
+            if(event && event.target) {
+                event.target.classList.add('active');
+            }
         }
 
         // TOGGLE LIVE VS DENÍK V NASTAVENÍ
@@ -376,6 +384,7 @@
         let sekundyCelkem = 0;
         function startCelkovyCasovac() {
             sekundyCelkem = 0;
+            if(timerInterval) clearInterval(timerInterval);
             timerInterval = setInterval(() => {
                 sekundyCelkem++;
                 let hrs = Math.floor(sekundyCelkem / 3600).toString().padStart(2, '0');
@@ -387,18 +396,20 @@
 
         function potvrditNastaveniCviku() {
             document.getElementById("picker-section").classList.add("hidden");
-            document.getElementById("main-live-btn").classList.remove("hidden");
-            document.getElementById("main-live-btn").innerText = "START SÉRIE";
+            const btn = document.getElementById("main-live-btn");
+            btn.classList.remove("hidden");
+            btn.innerText = "START SÉRIE";
+            btn.style.background = "var(--accent-color)";
             stavLive = "pripraven_na_serii";
         }
 
-        // GENIÁLNÍ JEDNOTLAČÍTKOVÉ OVLÁDÁNÍ LIVE REŽIMU
+        // OVLÁDÁNÍ LIVE REŽIMU
         function hlavniLiveAkce() {
             const btn = document.getElementById("main-live-btn");
             if(stavLive === "pripraven_na_serii") {
                 stavLive = "serie";
                 btn.innerText = "PAUZA";
-                btn.style.background = "#FF4C4C"; // Červená během série
+                btn.style.background = "#FF4C4C"; 
                 document.getElementById("live-info-label").innerText = "Série běží (Time Under Tension)...";
             } else if(stavLive === "serie") {
                 stavLive = "pauza";
@@ -431,6 +442,10 @@
         function renderujHistorii() {
             const container = document.getElementById("history-list");
             container.innerHTML = "";
+            if(localData.length === 0) {
+                container.innerHTML = "<p style='font-size:12px; color:var(--text-secondary)'>Zatím žádné tréninky.</p>";
+                return;
+            }
             localData.slice().reverse().forEach(w => {
                 container.innerHTML += `
                     <div class="workout-card">
