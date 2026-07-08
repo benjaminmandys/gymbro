@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>GymBro</title>
+    <style>
+        :root {
+            --accent-color: #FFDE4D; /* Výchozí žlutá, mění se dynamicky */
+            --bg-color: #121212;
+            --card-bg: #1E1E1E;
+            --text-color: #FFFFFF;
+            --text-secondary: #AAAAAA;
+        }
+        
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        /* Čtyři hlavní rohy - rozvržení */
+        .grid-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: 1fr 1fr;
+            height: 100vh;
+            padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+        }
+
+        .quadrant {
+            border: 1px solid #2d2d2d;
+            padding: 15px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        /* Nadpisy rohů */
+        .quadrant h2 {
+            font-size: 16px;
+            margin-top: 0;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-secondary);
+            border-bottom: 1px solid #2d2d2d;
+            padding-bottom: 5px;
+        }
+
+        /* LOGIN OBRAZOVKA */
+        #login-screen {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: var(--bg-color);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .ios-input {
+            background: var(--card-bg);
+            border: 1px solid #333;
+            color: white;
+            padding: 15px;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 280px;
+            font-size: 18px;
+            text-align: center;
+            margin-bottom: 15px;
+            outline: none;
+        }
+
+        .ios-btn {
+            background: var(--accent-color);
+            color: #000;
+            font-weight: bold;
+            padding: 15px 30px;
+            border-radius: 12px;
+            border: none;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+            max-width: 280px;
+        }
+
+        /* UKÁZKA CARD DESIGNU PRO HISTORII */
+        .workout-card {
+            background: var(--card-bg);
+            border-radius: 14px;
+            padding: 12px;
+            margin-bottom: 10px;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .duration-badge {
+            background: var(--accent-color);
+            color: #000;
+            font-size: 12px;
+            font-weight: bold;
+            padding: 4px 8px;
+            border-radius: 20px;
+        }
+
+        /* PICKER SIMULACE */
+        .picker-container {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin: 15px 0;
+            background: #1a1a1a;
+            padding: 10px;
+            border-radius: 14px;
+        }
+        .picker-wheel {
+            flex: 1;
+            text-align: center;
+        }
+        .picker-wheel select {
+            background: transparent;
+            color: white;
+            border: none;
+            font-size: 20px;
+            outline: none;
+            width: 100%;
+            text-align: center;
+            -webkit-appearance: none;
+        }
+
+        /* LIVE BOTTONS */
+        .live-action-btn {
+            background: var(--accent-color);
+            color: black;
+            font-size: 22px;
+            font-weight: bold;
+            padding: 25px;
+            border-radius: 50%;
+            width: 120px;
+            height: 120px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 20px auto;
+            border: none;
+            box-shadow: 0 0 15px rgba(255,222,77,0.3);
+        }
+
+        /* BARVY PRO PROFIL */
+        .color-dot {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 10px;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+        .color-dot.active {
+            border-color: white;
+        }
+
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+
+    <div id="login-screen">
+        <h1 style="font-size: 32px; margin-bottom: 5px;">GymBro</h1>
+        <p style="color: var(--text-secondary); margin-bottom: 30px;">Zadej svůj přístupový kód</p>
+        <input type="password" id="pin-input" class="ios-input" placeholder="••••" maxlength="4" pattern="\d*">
+        <button onclick="overitPin()" class="ios-btn">Vstoupit</button>
+    </div>
+
+    <div id="app-interface" class="grid-container hidden">
+        
+        <div class="quadrant" id="quad-stats">
+            <h2>Dlouhodobé Statistiky</h2>
+            <div style="display:flex; gap:10px; margin-bottom:15px;">
+                <button class="ios-btn" style="padding:5px; font-size:12px;">MĚSÍC</button>
+                <button class="ios-btn" style="padding:5px; font-size:12px; background:#333; color:white;">ROK</button>
+            </div>
+            <div id="stats-content">
+                <p>Průměrná délka: <strong id="stat-avg">1h 46min</strong></p>
+                <p>Celkový čas: <strong id="stat-total">25h 15min</strong></p>
+                <p>Celkem sérií: <strong id="stat-series">450</strong></p>
+            </div>
+        </div>
+
+        <div class="quadrant" id="quad-profile">
+            <h2>Můj Účet (<span id="user-name-display">...</span>)</h2>
+            
+            <p style="font-size:13px; color:var(--text-secondary)">Akcentová barva:</p>
+            <div style="margin-bottom: 15px;">
+                <span class="color-dot active" style="background:#FFDE4D" onclick="zmenBarvu('#FFDE4D')"></span>
+                <span class="color-dot" style="background:#FF4C4C" onclick="zmenBarvu('#FF4C4C')"></span>
+                <span class="color-dot" style="background:#4CD964" onclick="zmenBarvu('#4CD964')"></span>
+                <span class="color-dot" style="background:#007AFF" onclick="zmenBarvu('#007AFF')"></span>
+            </div>
+
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; background:#1e1e1e; padding:10px; border-radius:10px;">
+                <span style="font-size:14px;">Režim Live cvičení</span>
+                <input type="checkbox" id="live-mode-switch" checked onchange="toggleLiveModeView()">
+            </div>
+
+            <button class="ios-btn" style="margin-bottom:8px; font-size:13px; padding:10px;" onclick="syncSGoogleSheets()">🔄 Synchronizovat se Sheets</button>
+            <button class="ios-btn" style="margin-bottom:8px; font-size:13px; padding:10px; background:#333; color:white;" onclick="exportDoCSV()">📤 Exportovat data (.csv)</button>
+            <button class="ios-btn" style="font-size:13px; padding:10px; background:#333; color:white;" onclick="document.getElementById('import-file').click()">📥 Importovat data (.csv)</button>
+            <input type="file" id="import-file" class="hidden" accept=".csv" onchange="importZCSV(this)">
+        </div>
+
+        <div class="quadrant" id="quad-week">
+            <h2>Aktuální týden</h2>
+            <div class="workout-card" style="text-align:center;">
+                <div style="font-size:24px; font-weight:bold; color:var(--accent-color);">100%</div>
+                <div style="font-size:12px; color:var(--text-secondary);">týdenního cíle splněno</div>
+                <div style="font-size:14px; margin-top:5px;" id="weekly-goal-status">4 tréninky ze 4</div>
+            </div>
+            
+            <p style="font-size:12px; color:var(--text-secondary); margin-bottom:5px;">POSLEDNÍ TRÉNINKY</p>
+            <div id="history-list">
+                <div class="workout-card">
+                    <div class="card-header">
+                        <div>
+                            <div style="font-size:11px; color:var(--text-secondary)">3.7.2026</div>
+                            <div style="font-size:14px; font-weight:bold;">LEGDAY</div>
+                        </div>
+                        <span class="duration-badge">1h 43m</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="quadrant" id="quad-live">
+            <h2>Cvičení</h2>
+            
+            <div id="live-start-section">
+                <input type="text" id="workout-name" class="ios-input" placeholder="Název (např. FULLBODY)" style="font-size:14px; padding:10px;">
+                <input type="text" id="workout-gym" class="ios-input" placeholder="Posilovna (výchozí)" style="font-size:14px; padding:10px;">
+                <button class="ios-btn" onclick="startovatWorkout()">START TRÉNINKU</button>
+            </div>
+
+            <div id="live-tracking-section" class="hidden" style="text-align:center; flex:1; display:flex; flex-direction:column; justify-content:space-between;">
+                <div>
+                    <div style="font-size:14px; color:var(--text-secondary);" id="live-info-label">Cvičení běží...</div>
+                    <div style="font-size:28px; font-weight:bold; margin:10px 0;" id="live-timer">00:00:00</div>
+                </div>
+
+                <div id="picker-section" class="hidden">
+                    <p style="margin:5px 0; font-size:12px; color:var(--text-secondary);">Navol Série & Opakování</p>
+                    <div class="picker-container">
+                        <div class="picker-wheel">
+                            <select id="picker-sets">
+                                <option value="1">1 série</option><option value="2">2 série</option>
+                                <option value="3" selected>3 série</option><option value="4">4 série</option>
+                                <option value="5">5 sérií</option>
+                            </select>
+                        </div>
+                        <div class="picker-wheel">
+                            <select id="picker-reps">
+                                <option value="6">6 reps</option><option value="8">8 reps</option>
+                                <option value="10" selected>10 reps</option><option value="12">12 reps</option>
+                                <option value="15">15 reps</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button class="ios-btn" style="padding:8px;" onclick="potvrditNastaveniCviku()">Potvrdit cvik</button>
+                </div>
+
+                <button id="main-live-btn" class="live-action-btn class-hidden" onclick="hlavniLiveAkce()">START</button>
+                
+                <button class="ios-btn" style="background:#FF4C4C; color:white; padding:10px; font-size:14px;" onclick="ukoncitCelkovyWorkout()">UKONČIT TRÉNINK</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // --- PROPOJENÍ NA TVŮJ GOOGLE SCRIPT ---
+        const API_URL = https://script.google.com/macros/s/AKfycby2Jq6mnvMbk9IvBFuPV4K_zXIL3GbZjlSLhMDY62zWJIhvTrHLbvBMlOG1u3q6zlL1hQ/exec;
+
+        let prihlasenyUzivatel = "";
+        let localData = JSON.parse(localStorage.getItem("gymbro_workouts")) || [];
+        let aktualniWorkout = null;
+        let stavLive = "stop"; // stop, serie, pauza
+        let timerInterval = null;
+
+        // OVĚŘENÍ PINU
+        async function overitPin() {
+            const pin = document.getElementById("pin-input").value;
+            if(!pin) return;
+            
+            try {
+                const response = await fetch(API_URL, {
+                    method: "POST",
+                    body: JSON.stringify({ akce: "prihlaseni", kod: pin })
+                });
+                const res = await response.json();
+                if(res.status === "success") {
+                    prihlasenyUzivatel = res.uzivatel;
+                    document.getElementById("user-name-display").innerText = prihlasenyUzivatel;
+                    document.getElementById("login-screen").classList.add("hidden");
+                    document.getElementById("app-interface").classList.remove("hidden");
+                    renderujHistorii();
+                } else {
+                    alert("Neplatný přístupový kód!");
+                }
+            } catch(e) {
+                // Fail-safe pro offline režim v posilovně
+                alert("Jsi offline nebo API neodpovídá, ale pouštím tě dál do offline režimu.");
+                prihlasenyUzivatel = "Jan Novák (Offline)";
+                document.getElementById("user-name-display").innerText = prihlasenyUzivatel;
+                document.getElementById("login-screen").classList.add("hidden");
+                document.getElementById("app-interface").classList.remove("hidden");
+                renderujHistorii();
+            }
+        }
+
+        // DYNAMICKÁ BARVA ACCENTU
+        function zmenBarvu(hex) {
+            document.documentElement.style.setProperty('--accent-color', hex);
+            document.querySelectorAll('.color-dot').forEach(dot => dot.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+
+        // TOGGLE LIVE VS DENÍK V NASTAVENÍ
+        function toggleLiveModeView() {
+            const isLive = document.getElementById("live-mode-switch").checked;
+            alert(isLive ? "Zapnut režim stopování v posilovně." : "Zapnut režim rychlého zpětného zápisu.");
+        }
+
+        // START WORKOUTU
+        function startovatWorkout() {
+            const jmeno = document.getElementById("workout-name").value || "TRÉNINK";
+            const gym = document.getElementById("workout-gym").value || "Moje Posilovna";
+            
+            aktualniWorkout = {
+                id: "w_" + Date.now(),
+                datum: new Date().toLocaleDateString('cs-CZ'),
+                casStartu: new Date().toLocaleTimeString('cs-CZ'),
+                celkovyCas: "00:00:00",
+                posilovna: gym,
+                typTreninku: jmeno,
+                cviky: []
+            };
+
+            document.getElementById("live-start-section").classList.add("hidden");
+            document.getElementById("live-tracking-section").classList.remove("hidden");
+            document.getElementById("picker-section").classList.remove("hidden");
+            document.getElementById("main-live-btn").classList.add("hidden");
+            
+            startCelkovyCasovac();
+        }
+
+        // ČASOVAČE
+        let sekundyCelkem = 0;
+        function startCelkovyCasovac() {
+            sekundyCelkem = 0;
+            timerInterval = setInterval(() => {
+                sekundyCelkem++;
+                let hrs = Math.floor(sekundyCelkem / 3600).toString().padStart(2, '0');
+                let mins = Math.floor((sekundyCelkem % 3600) / 60).toString().padStart(2, '0');
+                let secs = (sekundyCelkem % 60).toString().padStart(2, '0');
+                document.getElementById("live-timer").innerText = `${hrs}:${mins}:${secs}`;
+            }, 1000);
+        }
+
+        function potvrditNastaveniCviku() {
+            document.getElementById("picker-section").classList.add("hidden");
+            document.getElementById("main-live-btn").classList.remove("hidden");
+            document.getElementById("main-live-btn").innerText = "START SÉRIE";
+            stavLive = "pripraven_na_serii";
+        }
+
+        // GENIÁLNÍ JEDNOTLAČÍTKOVÉ OVLÁDÁNÍ LIVE REŽIMU
+        function hlavniLiveAkce() {
+            const btn = document.getElementById("main-live-btn");
+            if(stavLive === "pripraven_na_serii") {
+                stavLive = "serie";
+                btn.innerText = "PAUZA";
+                btn.style.background = "#FF4C4C"; // Červená během série
+                document.getElementById("live-info-label").innerText = "Série běží (Time Under Tension)...";
+            } else if(stavLive === "serie") {
+                stavLive = "pauza";
+                btn.innerText = "DALŠÍ SÉRIE";
+                btn.style.background = "var(--accent-color)";
+                document.getElementById("live-info-label").innerText = "Odpočíváš (Pauza)...";
+            } else if(stavLive === "pauza") {
+                stavLive = "serie";
+                btn.innerText = "PAUZA";
+                btn.style.background = "#FF4C4C";
+                document.getElementById("live-info-label").innerText = "Série běží...";
+            }
+        }
+
+        function ukoncitCelkovyWorkout() {
+            clearInterval(timerInterval);
+            if(aktualniWorkout) {
+                aktualniWorkout.celkovyCas = document.getElementById("live-timer").innerText;
+                localData.push(aktualniWorkout);
+                localStorage.setItem("gymbro_workouts", JSON.stringify(localData));
+            }
+            
+            // Reset rozhraní
+            document.getElementById("live-start-section").classList.remove("hidden");
+            document.getElementById("live-tracking-section").classList.add("hidden");
+            renderujHistorii();
+            alert("Trénink úspěšně uložen do paměti iPhonu!");
+        }
+
+        function renderujHistorii() {
+            const container = document.getElementById("history-list");
+            container.innerHTML = "";
+            localData.slice().reverse().forEach(w => {
+                container.innerHTML += `
+                    <div class="workout-card">
+                        <div class="card-header">
+                            <div>
+                                <div style="font-size:11px; color:var(--text-secondary)">${w.datum}</div>
+                                <div style="font-size:14px; font-weight:bold;">${w.typTreninku} - ${w.posilovna}</div>
+                            </div>
+                            <span class="duration-badge">${w.celkovyCas}</span>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        // EXPORT DO CSV
+        function exportDoCSV() {
+            let csv = "ID;Datum;Posilovna;Typ;Celkovy_Cas\n";
+            localData.forEach(w => {
+                csv += `${w.id};${w.datum};${w.posilovna};${w.typTreninku};${w.celkovyCas}\n`;
+            });
+            let blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            let link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.setAttribute("download", "gymbro_zaloha.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // SYNCHRONIZACE S GOOGLE SHEETS
+        async function syncSGoogleSheets() {
+            if(localData.length === 0) {
+                alert("Nemáš žádná lokální data k synchronizaci.");
+                return;
+            }
+            try {
+                const response = await fetch(API_URL, {
+                    method: "POST",
+                    body: JSON.stringify({
+                        akce: "synchronizace_treninku",
+                        uzivatel: prihlasenyUzivatel,
+                        treninky: localData
+                    })
+                });
+                const res = await response.json();
+                if(res.status === "success") {
+                    alert("Všechna data byla úspěšně odeslána do Google Tabulky!");
+                }
+            } catch(e) {
+                alert("Synchronizace selhala. Zkontroluj připojení k internetu.");
+            }
+        }
+    </script>
+</body>
+</html>
