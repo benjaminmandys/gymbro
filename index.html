@@ -8,59 +8,77 @@
     <title>GymBro</title>
     <style>
         :root {
-            --accent-color: #FFDE4D; /* Výchozí žlutá, mění se dynamicky */
-            --bg-color: #121212;
-            --card-bg: #1E1E1E;
+            --accent-color: #FFDE4D;
+            --bg-color: #000000;
+            --card-bg: #1C1C1E;
+            --card-bg-secondary: #2C2C2E;
             --text-color: #FFFFFF;
-            --text-secondary: #AAAAAA;
+            --text-secondary: #8E8E93;
+            --border-color: #2C2C2E;
         }
         
         * {
             box-sizing: border-box;
             -webkit-tap-highlight-color: transparent;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
         }
 
         body {
-            margin: 0;
-            padding: 0;
             background-color: var(--bg-color);
             color: var(--text-color);
             overflow: hidden;
             height: 100vh;
+            width: 100vw;
         }
 
-        /* Čtyři hlavní rohy - rozvržení */
+        /* 2x2 FIXNÍ MŘÍŽKA PŘES CELOU OBRAZOVKU */
         .grid-container {
             display: grid;
             grid-template-columns: 1fr 1fr;
             grid-template-rows: 1fr 1fr;
             height: 100vh;
-            padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+            width: 100vw;
+            padding-top: env(safe-area-inset-top);
+            padding-bottom: env(safe-area-inset-bottom);
+            padding-left: env(safe-area-inset-left);
+            padding-right: env(safe-area-inset-right);
+            background-color: var(--bg-color);
+            gap: 1px; /* Vytvoří čisté dělící čáry mezi kvadranty */
+            background-image: linear-gradient(var(--border-color) 1px, transparent 1px), linear-gradient(90deg, var(--border-color) 1px, transparent 1px);
+            background-size: 50% 50%;
         }
 
         .quadrant {
-            border: 1px solid #2d2d2d;
-            padding: 15px;
-            overflow-y: auto;
+            padding: 16px;
             display: flex;
             flex-direction: column;
-            position: relative;
+            overflow-y: auto;
+            background-color: var(--bg-color);
+            -ms-overflow-style: none;  /* Skrytí scrollbaru pro Win */
+            scrollbar-width: none;  /* Skrytí scrollbaru pro Firefox */
+        }
+        
+        /* Skrytí scrollbaru pro Safari/Chrome */
+        .quadrant::-webkit-scrollbar {
+            display: none;
         }
 
-        /* Nadpisy rohů */
+        /* HLAVIČKY KVADRANTŮ DLE VIZUALIZACE */
         .quadrant h2 {
-            font-size: 16px;
-            margin-top: 0;
-            margin-bottom: 10px;
+            font-size: 14px;
+            font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 0.5px;
             color: var(--text-secondary);
-            border-bottom: 1px solid #2d2d2d;
-            padding-bottom: 5px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
-        /* LOGIN OBRAZOVKA */
+        /* LOGIN SCREEN - ČISTÝ iOS DESIGN */
         #login-screen {
             position: fixed;
             top: 0; left: 0; width: 100vw; height: 100vh;
@@ -70,115 +88,180 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            padding: 20px;
+            padding: 32px;
+        }
+
+        .login-title {
+            font-size: 34px;
+            font-weight: 800;
+            letter-spacing: -1px;
+            margin-bottom: 8px;
+        }
+
+        .login-subtitle {
+            color: var(--text-secondary);
+            font-size: 16px;
+            margin-bottom: 32px;
+            text-align: center;
+        }
+
+        /* iOS FORMULÁŘOVÉ PRVKY */
+        .ios-input-group {
+            background: var(--card-bg);
+            border-radius: 12px;
+            width: 100%;
+            max-width: 300px;
+            margin-bottom: 20px;
+            overflow: hidden;
         }
 
         .ios-input {
-            background: var(--card-bg);
-            border: 1px solid #333;
-            color: white;
-            padding: 15px;
-            border-radius: 12px;
             width: 100%;
-            max-width: 280px;
-            font-size: 18px;
-            text-align: center;
-            margin-bottom: 15px;
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-color);
+            padding: 16px;
+            font-size: 17px;
             outline: none;
+        }
+        
+        .ios-input:last-child {
+            border-bottom: none;
         }
 
         .ios-btn {
             background: var(--accent-color);
-            color: #000;
-            font-weight: bold;
-            padding: 15px 30px;
+            color: #000000;
+            font-weight: 600;
+            padding: 16px;
             border-radius: 12px;
             border: none;
-            font-size: 16px;
+            font-size: 17px;
             cursor: pointer;
             width: 100%;
-            max-width: 280px;
+            max-width: 300px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
         }
 
-        /* UKÁZKA CARD DESIGNU PRO HISTORII */
-        .workout-card {
+        .ios-btn-secondary {
             background: var(--card-bg);
-            border-radius: 14px;
-            padding: 12px;
-            margin-bottom: 10px;
+            color: var(--text-color);
         }
 
-        .card-header {
+        /* KARTY V HISTORII A STATISTIKÁCH */
+        .ios-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 14px;
+            margin-bottom: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .ios-switch-container {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 12px 16px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            margin-bottom: 16px;
         }
 
-        .duration-badge {
-            background: var(--accent-color);
-            color: #000;
-            font-size: 12px;
-            font-weight: bold;
-            padding: 4px 8px;
-            border-radius: 20px;
+        /* Stylování iOS Switche */
+        .ios-switch {
+            position: relative;
+            display: inline-block;
+            width: 51px;
+            height: 31px;
         }
 
-        /* PICKER SIMULACE */
-        .picker-container {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-            margin: 15px 0;
-            background: #1a1a1a;
-            padding: 10px;
-            border-radius: 14px;
+        .ios-switch input { opacity: 0; width: 0; height: 0; }
+
+        .slider {
+            position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+            background-color: var(--card-bg-secondary);
+            transition: .3s; border-radius: 31px;
         }
-        .picker-wheel {
-            flex: 1;
-            text-align: center;
+
+        .slider:before {
+            position: absolute; content: ""; height: 27px; width: 27px; left: 2px; bottom: 2px;
+            background-color: white; transition: .3s; border-radius: 50%;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.15);
         }
-        .picker-wheel select {
-            background: transparent;
-            color: white;
-            border: none;
-            font-size: 20px;
-            outline: none;
+
+        input:checked + .slider { background-color: #34C759; }
+        input:checked + .slider:before { transform: translateX(20px); }
+
+        /* PICKERY PRO KROK ZA KROKEM (WHEEL SIMULACE) */
+        .ios-picker-select {
+            background: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 16px;
             width: 100%;
-            text-align: center;
+            margin-bottom: 10px;
+            outline: none;
             -webkit-appearance: none;
         }
 
-        /* LIVE BUTTONS */
-        .live-action-btn {
-            background: var(--accent-color);
-            color: black;
-            font-size: 20px;
-            font-weight: bold;
-            padding: 20px;
+        /* LIVE REŽIM - SKUTEČNÝ VELKÝ KRUH */
+        .live-circle-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex: 1;
+        }
+
+        .live-circle-btn {
+            width: 140px;
+            height: 140px;
             border-radius: 50%;
-            width: 130px;
-            height: 130px;
+            background: var(--accent-color);
+            color: #000000;
+            font-size: 20px;
+            font-weight: 700;
+            border: none;
             display: flex;
             justify-content: center;
             align-items: center;
-            margin: 20px auto;
-            border: none;
-            box-shadow: 0 0 15px rgba(255,222,77,0.3);
+            box-shadow: 0 0 20px rgba(255,222,77,0.2);
             cursor: pointer;
+            transition: transform 0.1s, background-color 0.2s;
         }
 
-        /* BARVY PRO PROFIL */
+        .live-circle-btn:active {
+            transform: scale(0.96);
+        }
+
+        /* PROFILOVÉ BARVY - TEČKY */
+        .color-picker {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
         .color-dot {
-            width: 30px;
-            height: 30px;
+            width: 32px;
+            height: 32px;
             border-radius: 50%;
-            display: inline-block;
-            margin-right: 10px;
             cursor: pointer;
             border: 2px solid transparent;
         }
-        .color-dot.active {
-            border-color: white;
+        .color-dot.active { border-color: #FFFFFF; }
+
+        .badge {
+            background: var(--card-bg-secondary);
+            color: var(--accent-color);
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
         }
 
         .hidden { display: none !important; }
@@ -187,130 +270,126 @@
 <body>
 
     <div id="login-screen">
-        <h1 style="font-size: 32px; margin-bottom: 5px;">GymBro</h1>
-        <p style="color: var(--text-secondary); margin-bottom: 30px;">Zadej svůj přístupový kód</p>
-        <input type="password" id="pin-input" class="ios-input" placeholder="••••" maxlength="4" pattern="\d*">
+        <div class="login-title">GymBro</div>
+        <div class="login-subtitle">Zadej kód tréninkové skupiny</div>
+        <input type="password" id="pin-input" class="ios-input" placeholder="••••" maxlength="4" pattern="\d*" style="background: var(--card-bg); border-radius: 12px; max-width: 200px; font-size: 24px; margin-bottom: 24px;">
         <button onclick="overitPin()" class="ios-btn">Vstoupit</button>
     </div>
 
     <div id="app-interface" class="grid-container hidden">
         
         <div class="quadrant" id="quad-stats">
-            <h2>Dlouhodobé Statistiky</h2>
-            <div style="display:flex; gap:10px; margin-bottom:15px;">
-                <button class="ios-btn" style="padding:5px; font-size:12px;">MĚSÍC</button>
-                <button class="ios-btn" style="padding:5px; font-size:12px; background:#333; color:white;">ROK</button>
+            <h2>Statistiky <span class="badge">Celkem</span></h2>
+            <div class="ios-card">
+                <span style="font-size:12px; color:var(--text-secondary)">Průměrná délka</span>
+                <span style="font-size:20px; font-weight:700;" id="stat-avg">1h 46m</span>
             </div>
-            <div id="stats-content">
-                <p>Průměrná délka: <strong id="stat-avg">1h 46min</strong></p>
-                <p>Celkový čas: <strong id="stat-total">25h 15min</strong></p>
-                <p>Celkem sérií: <strong id="stat-series">450</strong></p>
+            <div class="ios-card">
+                <span style="font-size:12px; color:var(--text-secondary)">Odcvičeno celkem</span>
+                <span style="font-size:20px; font-weight:700;" id="stat-total">25h 15m</span>
+            </div>
+            <div class="ios-card">
+                <span style="font-size:12px; color:var(--text-secondary)">Celkový počet sérií</span>
+                <span style="font-size:20px; font-weight:700;" id="stat-series">450</span>
             </div>
         </div>
 
         <div class="quadrant" id="quad-profile">
-            <h2>Můj Účet (<span id="user-name-display">...</span>)</h2>
+            <h2>Nastavení <span class="badge" id="user-name-display">...</span></h2>
             
-            <p style="font-size:13px; color:var(--text-secondary)">Akcentová barva:</p>
-            <div style="margin-bottom: 15px;">
-                <span class="color-dot active" style="background:#FFDE4D" onclick="zmenBarvu('#FFDE4D', event)"></span>
-                <span class="color-dot" style="background:#FF4C4C" onclick="zmenBarvu('#FF4C4C', event)"></span>
-                <span class="color-dot" style="background:#4CD964" onclick="zmenBarvu('#4CD964', event)"></span>
-                <span class="color-dot" style="background:#007AFF" onclick="zmenBarvu('#007AFF', event)"></span>
+            <div class="ios-switch-container">
+                <span style="font-size: 15px; font-weight: 500;">Live Stopování tréninku</span>
+                <label class="ios-switch">
+                    <input type="checkbox" id="live-mode-switch" checked onchange="upravRezimZobrazeni()">
+                    <span class="slider"></span>
+                </label>
             </div>
 
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; background:#1e1e1e; padding:10px; border-radius:10px;">
-                <span style="font-size:14px;">Režim Live cvičení</span>
-                <input type="checkbox" id="live-mode-switch" checked onchange="toggleLiveModeView()">
+            <div class="color-picker">
+                <span class="color-dot active" style="background:#FFDE4D" onclick="zmenTheme('#FFDE4D', event)"></span>
+                <span class="color-dot" style="background:#FF453A" onclick="zmenTheme('#FF453A', event)"></span>
+                <span class="color-dot" style="background:#30D158" onclick="zmenTheme('#30D158', event)"></span>
+                <span class="color-dot" style="background:#0A84FF" onclick="zmenTheme('#0A84FF', event)"></span>
             </div>
 
-            <button class="ios-btn" style="margin-bottom:8px; font-size:13px; padding:10px;" onclick="syncSGoogleSheets()">🔄 Synchronizovat se Sheets</button>
-            <button class="ios-btn" style="margin-bottom:8px; font-size:13px; padding:10px; background:#333; color:white;" onclick="exportDoCSV()">📤 Exportovat data (.csv)</button>
-            <button class="ios-btn" style="font-size:13px; padding:10px; background:#333; color:white;" onclick="document.getElementById('import-file').click()">📥 Importovat data (.csv)</button>
+            <button class="ios-btn ios-btn-secondary" style="margin-bottom:8px; font-size:14px; padding:12px;" onclick="syncSGoogleSheets()">🔄 Synchronizovat data</button>
+            <button class="ios-btn ios-btn-secondary" style="margin-bottom:8px; font-size:14px; padding:12px;" onclick="exportDoCSV()">📤 Exportovat do .CSV</button>
+            <button class="ios-btn ios-btn-secondary" style="font-size:14px; padding:12px;" onclick="document.getElementById('import-file').click()">📥 Importovat z .CSV</button>
             <input type="file" id="import-file" class="hidden" accept=".csv" onchange="importZCSV(this)">
         </div>
 
         <div class="quadrant" id="quad-week">
-            <h2>Aktuální týden</h2>
-            <div class="workout-card" style="text-align:center;">
-                <div style="font-size:24px; font-weight:bold; color:var(--accent-color);">100%</div>
-                <div style="font-size:12px; color:var(--text-secondary);">týdenního cíle splněno</div>
-                <div style="font-size:14px; margin-top:5px;" id="weekly-goal-status">4 tréninky ze 4</div>
+            <h2>Aktuální Týden</h2>
+            <div class="ios-card" style="border-left: 4px solid var(--accent-color); margin-bottom:16px;">
+                <span style="font-size:13px; color:var(--text-secondary)">Plnění týdenního cíle</span>
+                <span style="font-size:22px; font-weight:800; color:var(--accent-color)">100% SPLNĚNO</span>
+                <span style="font-size:12px; color:var(--text-secondary)" id="weekly-goal-status">4 ze 4 tréninků tento týden</span>
             </div>
-            
-            <p style="font-size:12px; color:var(--text-secondary); margin-bottom:5px;">POSLEDNÍ TRÉNINKY</p>
             <div id="history-list">
-                <div class="workout-card">
-                    <div class="card-header">
-                        <div>
-                            <div style="font-size:11px; color:var(--text-secondary)">3.7.2026</div>
-                            <div style="font-size:14px; font-weight:bold;">LEGDAY</div>
-                        </div>
-                        <span class="duration-badge">1h 43m</span>
-                    </div>
                 </div>
-            </div>
         </div>
 
         <div class="quadrant" id="quad-live">
-            <h2>Cvičení</h2>
+            <h2 id="workout-box-title">Nový Trénink</h2>
             
-            <div id="live-start-section">
-                <input type="text" id="workout-name" class="ios-input" placeholder="Název (např. FULLBODY)" style="font-size:14px; padding:10px;">
-                <input type="text" id="workout-gym" class="ios-input" placeholder="Posilovna (výchozí)" style="font-size:14px; padding:10px;">
-                <button class="ios-btn" onclick="startovatWorkout()">START TRÉNINKU</button>
-            </div>
-
-            <div id="live-tracking-section" class="hidden" style="text-align:center; flex:1; display:flex; flex-direction:column; justify-content:space-between;">
-                <div>
-                    <div style="font-size:14px; color:var(--text-secondary);" id="live-info-label">Cvičení běží...</div>
-                    <div style="font-size:28px; font-weight:bold; margin:10px 0;" id="live-timer">00:00:00</div>
-                </div>
-
-                <div id="picker-section" class="hidden">
-                    <p style="margin:5px 0; font-size:12px; color:var(--text-secondary);">Navol Série & Opakování</p>
-                    <div class="picker-container">
-                        <div class="picker-wheel">
-                            <select id="picker-sets">
-                                <option value="1">1 série</option><option value="2">2 série</option>
-                                <option value="3" selected>3 série</option><option value="4">4 série</option>
-                                <option value="5">5 sérií</option>
-                            </select>
-                        </div>
-                        <div class="picker-wheel">
-                            <select id="picker-reps">
-                                <option value="6">6 reps</option><option value="8">8 reps</option>
-                                <option value="10" selected>10 reps</option><option value="12">12 reps</option>
-                                <option value="15">15 reps</option>
-                            </select>
-                        </div>
-                    </div>
-                    <button class="ios-btn" style="padding:8px;" onclick="potvrditNastaveniCviku()">Potvrdit cvik</button>
-                </div>
-
-                <button id="main-live-btn" class="live-action-btn hidden" onclick="hlavniLiveAkce()">START</button>
+            <div id="setup-view" class="ios-input-group" style="max-width:100%; background:transparent; margin:0;">
+                <input type="text" id="setup-name" class="ios-input" placeholder="Název tréninku (např. PUSH)" style="background:var(--card-bg); border-radius:10px; margin-bottom:8px;">
                 
-                <button class="ios-btn" style="background:#FF4C4C; color:white; padding:10px; font-size:14px; margin-top:10px;" onclick="ukoncitCelkovyWorkout()">UKONČIT TRÉNINK</button>
+                <select id="setup-gym-picker" class="ios-picker-select">
+                    </select>
+                
+                <button class="ios-btn" style="max-width:100%; margin-top:8px;" onclick="nastartovatGymSession()">SPUSTIT</button>
             </div>
+
+            <div id="live-active-view" class="hidden" style="display:flex; flex-direction:column; height:100%; justify-content:space-between;">
+                <div style="text-align:center; margin-top:10px;">
+                    <div id="live-current-exercise" style="font-size:18px; font-weight:700; color:var(--accent-color)">Vyber cvik níže</div>
+                    <div id="live-timer" style="font-size:32px; font-weight:800; letter-spacing:1px; margin:8px 0;">00:00:00</div>
+                </div>
+
+                <div id="live-exercise-picker-zone">
+                    <select id="live-exercise-picker" class="ios-picker-select" onchange="zmenAktualniCvik()">
+                        </select>
+                    <div style="display:flex; gap:8px;">
+                        <select id="live-sets-picker" class="ios-picker-select"><option>3 série</option><option>4 série</option></select>
+                        <select id="live-reps-picker" class="ios-picker-select"><option>10 reps</option><option>12 reps</option></select>
+                    </div>
+                </div>
+
+                <div class="live-circle-container">
+                    <button id="circle-action-btn" class="live-circle-btn" onclick="provedKruhovéLiveTlacitko()">START</button>
+                </div>
+
+                <button class="ios-btn" style="max-width:100%; background:#FF453A; color:white; margin-top:10px;" onclick="stopnoutAUlozitWorkout()">UKONČIT TRÉNINK</button>
+            </div>
+
+            <div id="manual-log-view" class="hidden">
+                <select id="manual-exercise-picker" class="ios-picker-select" style="margin-top:10px;"></select>
+                <input type="number" id="manual-sets" class="ios-input" placeholder="Počet sérií" style="background:var(--card-bg); border-radius:10px; margin-bottom:8px;">
+                <input type="number" id="manual-reps" class="ios-input" placeholder="Počet opakování" style="background:var(--card-bg); border-radius:10px; margin-bottom:8px;">
+                <button class="ios-btn" style="max-width:100%;" onclick="ulozitCisteDoDeniku()">ZAPSAT DO DENÍKU</button>
+            </div>
+
         </div>
 
     </div>
 
     <script>
-        // --- PROPOJENÍ NA TVŮJ GOOGLE SCRIPT ---
-        const API_URL = "https://script.google.com/macros/s/AKfycby2Jq6mnvMbk9IvBFuPV4K_zXIL3GbZjlSLhMDY62zWJIhvTrHLbvBMlOG1u3q6zlL1hQ/exec";
+        // --- TVOJE EXEC ADRESA Z GOOGLE APPS SCRIPTU ---
+        const API_URL = "SEM_VLOŽ_SVOU_URL_Z_GOOGLE_APPS_SCRIPTU";
 
-        let prihlasenyUzivatel = "";
+        let uzivatel = "";
         let localData = JSON.parse(localStorage.getItem("gymbro_workouts")) || [];
-        let aktualniWorkout = null;
-        let stavLive = "stop"; // stop, serie, pauza
-        let timerInterval = null;
+        let activeWorkout = null;
+        let stopkyInterval = null;
+        let sekundy = 0;
+        let stavCviceni = "ready"; // ready, tracking, rest
 
-        // OVĚŘENÍ PINU
+        // 1. AUTENTIKACE & STAŽENÍ DAT UŽIVATELE
         async function overitPin() {
             const pin = document.getElementById("pin-input").value;
             if(!pin) return;
-            
+
             try {
                 const response = await fetch(API_URL, {
                     method: "POST",
@@ -318,187 +397,38 @@
                 });
                 const res = await response.json();
                 if(res.status === "success") {
-                    prihlasenyUzivatel = res.uzivatel;
-                    pustitDoAplikace();
+                    uzivatel = res.uzivatel;
+                    document.getElementById("user-name-display").innerText = uzivatel;
+                    
+                    // Načtení individuálního seznamu cviků a posiloven z Google Tabulky
+                    await nactiUzivatelskeSeznamy();
+                    
+                    document.getElementById("login-screen").classList.add("hidden");
+                    document.getElementById("app-interface").classList.remove("hidden");
+                    renderujHistoriiZalohy();
                 } else {
-                    alert("Neplatný přístupový kód!");
+                    alert("Neplatný kód skupiny!");
                 }
             } catch(e) {
-                console.log("Síťové ověření selhalo, aktivuji offline režim.", e);
-                // Fail-safe pro offline režim v posilovně (když jsi bez signálu, pustí tě to na kód 4821)
-                if (pin === "4821" || pin === "9537" || pin === "1234") {
-                    prihlasenyUzivatel = "Uživatel (Offline)";
-                    pustitDoAplikace();
+                // Nouzový režim pro posilovny bez signálu
+                if(pin === "4821") {
+                    uzivatel = "Jan Novák (Offline)";
+                    document.getElementById("user-name-display").innerText = "Jan N.";
+                    pripravZalozniOfflineSeznamy();
+                    document.getElementById("login-screen").classList.add("hidden");
+                    document.getElementById("app-interface").classList.remove("hidden");
+                    renderujHistoriiZalohy();
                 } else {
-                    alert("Chyba spojení a kód není uložen lokálně.");
+                    alert("Chyba sítě. Zkontroluj mobilní data.");
                 }
             }
         }
 
-        function pustitDoAplikace() {
-            document.getElementById("user-name-display").innerText = prihlasenyUzivatel;
-            document.getElementById("login-screen").classList.add("hidden");
-            document.getElementById("app-interface").classList.remove("hidden");
-            renderujHistorii();
-        }
-
-        // DYNAMICKÁ BARVA ACCENTU
-        function zmenBarvu(hex, event) {
-            document.documentElement.style.setProperty('--accent-color', hex);
-            document.querySelectorAll('.color-dot').forEach(dot => dot.classList.remove('active'));
-            if(event && event.target) {
-                event.target.classList.add('active');
-            }
-        }
-
-        // TOGGLE LIVE VS DENÍK V NASTAVENÍ
-        function toggleLiveModeView() {
-            const isLive = document.getElementById("live-mode-switch").checked;
-            alert(isLive ? "Zapnut režim stopování v posilovně." : "Zapnut režim rychlého zpětného zápisu.");
-        }
-
-        // START WORKOUTU
-        function startovatWorkout() {
-            const jmeno = document.getElementById("workout-name").value || "TRÉNINK";
-            const gym = document.getElementById("workout-gym").value || "Moje Posilovna";
-            
-            aktualniWorkout = {
-                id: "w_" + Date.now(),
-                datum: new Date().toLocaleDateString('cs-CZ'),
-                casStartu: new Date().toLocaleTimeString('cs-CZ'),
-                celkovyCas: "00:00:00",
-                posilovna: gym,
-                typTreninku: jmeno,
-                cviky: []
-            };
-
-            document.getElementById("live-start-section").classList.add("hidden");
-            document.getElementById("live-tracking-section").classList.remove("hidden");
-            document.getElementById("picker-section").classList.remove("hidden");
-            document.getElementById("main-live-btn").classList.add("hidden");
-            
-            startCelkovyCasovac();
-        }
-
-        // ČASOVAČE
-        let sekundyCelkem = 0;
-        function startCelkovyCasovac() {
-            sekundyCelkem = 0;
-            if(timerInterval) clearInterval(timerInterval);
-            timerInterval = setInterval(() => {
-                sekundyCelkem++;
-                let hrs = Math.floor(sekundyCelkem / 3600).toString().padStart(2, '0');
-                let mins = Math.floor((sekundyCelkem % 3600) / 60).toString().padStart(2, '0');
-                let secs = (sekundyCelkem % 60).toString().padStart(2, '0');
-                document.getElementById("live-timer").innerText = `${hrs}:${mins}:${secs}`;
-            }, 1000);
-        }
-
-        function potvrditNastaveniCviku() {
-            document.getElementById("picker-section").classList.add("hidden");
-            const btn = document.getElementById("main-live-btn");
-            btn.classList.remove("hidden");
-            btn.innerText = "START SÉRIE";
-            btn.style.background = "var(--accent-color)";
-            stavLive = "pripraven_na_serii";
-        }
-
-        // OVLÁDÁNÍ LIVE REŽIMU
-        function hlavniLiveAkce() {
-            const btn = document.getElementById("main-live-btn");
-            if(stavLive === "pripraven_na_serii") {
-                stavLive = "serie";
-                btn.innerText = "PAUZA";
-                btn.style.background = "#FF4C4C"; 
-                document.getElementById("live-info-label").innerText = "Série běží (Time Under Tension)...";
-            } else if(stavLive === "serie") {
-                stavLive = "pauza";
-                btn.innerText = "DALŠÍ SÉRIE";
-                btn.style.background = "var(--accent-color)";
-                document.getElementById("live-info-label").innerText = "Odpočíváš (Pauza)...";
-            } else if(stavLive === "pauza") {
-                stavLive = "serie";
-                btn.innerText = "PAUZA";
-                btn.style.background = "#FF4C4C";
-                document.getElementById("live-info-label").innerText = "Série běží...";
-            }
-        }
-
-        function ukoncitCelkovyWorkout() {
-            clearInterval(timerInterval);
-            if(aktualniWorkout) {
-                aktualniWorkout.celkovyCas = document.getElementById("live-timer").innerText;
-                localData.push(aktualniWorkout);
-                localStorage.setItem("gymbro_workouts", JSON.stringify(localData));
-            }
-            
-            // Reset rozhraní
-            document.getElementById("live-start-section").classList.remove("hidden");
-            document.getElementById("live-tracking-section").classList.add("hidden");
-            renderujHistorii();
-            alert("Trénink úspěšně uložen do paměti iPhonu!");
-        }
-
-        function renderujHistorii() {
-            const container = document.getElementById("history-list");
-            container.innerHTML = "";
-            if(localData.length === 0) {
-                container.innerHTML = "<p style='font-size:12px; color:var(--text-secondary)'>Zatím žádné tréninky.</p>";
-                return;
-            }
-            localData.slice().reverse().forEach(w => {
-                container.innerHTML += `
-                    <div class="workout-card">
-                        <div class="card-header">
-                            <div>
-                                <div style="font-size:11px; color:var(--text-secondary)">${w.datum}</div>
-                                <div style="font-size:14px; font-weight:bold;">${w.typTreninku} - ${w.posilovna}</div>
-                            </div>
-                            <span class="duration-badge">${w.celkovyCas}</span>
-                        </div>
-                    </div>
-                `;
-            });
-        }
-
-        // EXPORT DO CSV
-        function exportDoCSV() {
-            let csv = "ID;Datum;Posilovna;Typ;Celkovy_Cas\n";
-            localData.forEach(w => {
-                csv += `${w.id};${w.datum};${w.posilovna};${w.typTreninku};${w.celkovyCas}\n`;
-            });
-            let blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-            let link = document.createElement("a");
-            link.href = URL.createObjectURL(blob);
-            link.setAttribute("download", "gymbro_zaloha.csv");
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }
-
-        // SYNCHRONIZACE S GOOGLE SHEETS
-        async function syncSGoogleSheets() {
-            if(localData.length === 0) {
-                alert("Nemáš žádná lokální data k synchronizaci.");
-                return;
-            }
+        // 2. INDIVIDUÁLNÍ NAČÍTÁNÍ DAT PRO KAŽDÉHO UŽIVATELE
+        async function nactiUzivatelskeSeznamy() {
             try {
-                const response = await fetch(API_URL, {
-                    method: "POST",
-                    body: JSON.stringify({
-                        akce: "synchronizace_treninku",
-                        uzivatel: prihlasenyUzivatel,
-                        treninky: localData
-                    })
-                });
-                const res = await response.json();
-                if(res.status === "success") {
-                    alert("Všechna data byla úspěšně odeslána do Google Tabulky!");
-                }
-            } catch(e) {
-                alert("Synchronizace selhala. Zkontroluj připojení k internetu.");
-            }
-        }
-    </script>
-</body>
-</html>
+                const res = await fetch(`${API_URL}?uzivatel=${encodeURIComponent(uzivatel)}`);
+                const data = await res.json();
+                
+                // Naplnění pickerů posiloven
+                const gymPicker = document.getElementById("setup-gym-picker");
