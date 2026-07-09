@@ -1,349 +1,1336 @@
 <!DOCTYPE html>
 <html lang="cs">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>GymBro Ultimate</title>
-    <style>
-        :root {
-            --accent-color: #FFDE4D;
-            --bg-color: #000000;
-            --card-bg: #1C1C1E;
-            --card-bg-secondary: #2C2C2E;
-            --text-color: #FFFFFF;
-            --text-secondary: #8E8E93;
-            --border-color: #2C2C2E;
-        }
-        
-        * {
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-            margin: 0; padding: 0;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>GymBro</title>
+<style>
+:root{
+  --accent-color:#FFDE4D;
+  --accent-color-dim:rgba(255,222,77,0.15);
+  --bg-color:#000000;
+  --card-bg:#1C1C1E;
+  --card-bg-secondary:#2C2C2E;
+  --text-color:#FFFFFF;
+  --text-secondary:#8E8E93;
+  --border-color:#2C2C2E;
+  --green:#34C759;
+  --red:#FF453A;
+  --blue:#0A84FF;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",sans-serif;margin:0;padding:0;}
+html,body{background:var(--bg-color);color:var(--text-color);overscroll-behavior:none;}
+body{height:100vh;width:100vw;overflow:hidden;position:fixed;inset:0;}
+h1,h2,h3{font-weight:800;}
+button{font-family:inherit;}
+svg{display:block;}
+::-webkit-scrollbar{display:none;}
+a{color:var(--accent-color);}
 
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            overflow: hidden;
-            height: 100vh; width: 100vw;
-        }
+/* ---------- LOGIN ---------- */
+#login-screen{position:fixed;inset:0;background:var(--bg-color);z-index:9999;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:32px;}
+#login-screen .logo{font-size:52px;margin-bottom:6px;}
+#login-error{color:var(--red);font-size:13px;height:16px;margin-top:10px;}
 
-        /* HLAVNÍ ROZCESTNÍK */
-        .home-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            grid-template-rows: 1fr 1fr;
-            height: 100vh; width: 100vw;
-            gap: 12px;
-            padding: calc(env(safe-area-inset-top) + 12px) 12px calc(env(safe-area-inset-bottom) + 12px) 12px;
-        }
+/* ---------- SHARED LAYOUT ---------- */
+.screen{position:fixed;top:0;left:0;width:100vw;height:100vh;background:var(--bg-color);display:flex;flex-direction:column;}
+#home-screen{z-index:1;}
+.top-icon-row{display:flex;justify-content:space-between;align-items:center;padding:calc(env(safe-area-inset-top) + 14px) 18px 6px 18px;}
+.icon-circle-btn{width:42px;height:42px;border-radius:50%;background:var(--card-bg);border:none;display:flex;align-items:center;justify-content:center;color:var(--accent-color);flex-shrink:0;}
+.icon-circle-btn:active{opacity:.7;}
+.icon-circle-btn svg{width:20px;height:20px;}
+.icon-plain-btn{background:none;border:none;color:var(--text-color);display:flex;align-items:center;justify-content:center;padding:6px;}
 
-        .menu-tile {
-            background: var(--card-bg);
-            border-radius: 20px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            font-size: 16px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: var(--text-color);
-            border: 1px solid var(--border-color);
-            cursor: pointer;
-            transition: transform 0.1s;
-            text-align: center;
-            padding: 20px;
-        }
-        .menu-tile:active { transform: scale(0.95); }
-        .menu-tile span { font-size: 32px; margin-bottom: 8px; }
+.scroll-area{flex:1;overflow-y:auto;padding:6px 18px calc(env(safe-area-inset-bottom) + 90px) 18px;display:flex;flex-direction:column;gap:14px;}
 
-        /* FULLSCREEN STRÁNKY */
-        .page {
-            position: fixed;
-            top: 0; left: 0; width: 100vw; height: 100vh;
-            background: var(--bg-color);
-            z-index: 100;
-            display: flex;
-            flex-direction: column;
-            padding: calc(env(safe-area-inset-top) + 16px) 16px calc(env(safe-area-inset-bottom) + 16px) 16px;
-            transform: translateY(100%);
-            transition: transform 0.3s cubic-bezier(0.1, 0.76, 0.55, 0.94);
-        }
-        .page.active { transform: translateY(0); }
+.bottom-tab-bar{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom) + 16px);background:var(--card-bg);border-radius:26px;display:flex;align-items:center;gap:4px;padding:8px 10px;z-index:50;box-shadow:0 8px 24px rgba(0,0,0,.5);}
+.bottom-tab-bar .tab-btn{width:46px;height:46px;border-radius:20px;background:transparent;border:none;color:var(--text-color);display:flex;align-items:center;justify-content:center;}
+.bottom-tab-bar .tab-btn.accent{background:var(--accent-color);color:#000;}
+.bottom-tab-bar .tab-divider{width:1px;height:26px;background:var(--border-color);}
+.bottom-tab-bar svg{width:22px;height:22px;}
 
-        .page-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 16px;
-        }
-        .page-title { font-size: 24px; font-weight: 700; }
-        .back-btn {
-            background: var(--card-bg);
-            color: var(--accent-color);
-            border: none; padding: 8px 16px;
-            border-radius: 12px; font-weight: 600; font-size: 14px;
-        }
+/* ---------- OVERLAY PAGES ---------- */
+.page{position:fixed;top:0;left:0;width:100vw;height:100vh;background:var(--bg-color);z-index:100;display:flex;flex-direction:column;transform:translateY(100%);transition:transform .32s cubic-bezier(.1,.76,.55,.94);}
+.page.active{transform:translateY(0);}
+.page-header{display:flex;align-items:center;gap:10px;padding:calc(env(safe-area-inset-top) + 14px) 18px 8px 18px;}
+.page-title{font-size:22px;font-weight:800;flex:1;}
+.chevron-back{background:none;border:none;color:var(--text-color);}
+.chevron-back svg{width:24px;height:24px;}
 
-        .page-content {
-            flex: 1;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            padding-bottom: 40px;
-        }
+/* ---------- PROGRESS RING ---------- */
+.ring-wrap{width:210px;height:210px;border-radius:50%;position:relative;margin:6px auto;display:flex;align-items:center;justify-content:center;}
+.ring-wrap::before{content:"";position:absolute;inset:16px;background:var(--bg-color);border-radius:50%;}
+.ring-content{position:relative;z-index:2;text-align:center;}
+.ring-content .rc-big{font-size:44px;font-weight:800;}
+.ring-content .rc-sub{font-size:13px;color:var(--text-secondary);margin-top:2px;max-width:150px;}
+.ring-content .rc-frac{font-size:13px;color:var(--text-secondary);margin-top:6px;}
+.ring-content a.rc-link{display:block;margin-top:8px;font-size:12px;text-decoration:underline;}
+.ring-wrap.small{width:170px;height:170px;}
+.ring-wrap.small::before{inset:12px;}
+.ring-wrap.small .rc-big{font-size:34px;}
 
-        /* LOGIN SCREEN */
-        #login-screen {
-            position: fixed;
-            top: 0; left: 0; width: 100vw; height: 100vh;
-            background: var(--bg-color);
-            z-index: 9999;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 32px;
-        }
+/* ---------- CARDS ---------- */
+.ios-card{background:var(--card-bg);border-radius:18px;padding:16px;display:flex;flex-direction:column;gap:6px;}
+.ios-card h3{font-size:14px;}
+.label-sm{font-size:11px;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.4px;}
 
-        /* iOS KOMPONENTY */
-        .ios-input, .ios-select {
-            width: 100%;
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            color: var(--text-color);
-            padding: 14px;
-            border-radius: 12px;
-            font-size: 16px;
-            outline: none;
-        }
-        .ios-btn {
-            background: var(--accent-color);
-            color: #000; font-weight: 600;
-            padding: 14px; border-radius: 12px;
-            border: none; font-size: 16px;
-            text-align: center; width: 100%;
-            cursor: pointer;
-        }
-        .ios-btn-sub {
-            background: var(--card-bg-secondary);
-            color: var(--text-color);
-        }
+/* collapsible workout card (home + history) */
+.wk-card{background:var(--card-bg-secondary);border-radius:18px;padding:14px 16px;}
+.wk-top{display:flex;align-items:center;gap:10px;cursor:pointer;}
+.wk-top .wk-date-block{flex:1;}
+.wk-date{font-size:19px;font-weight:800;}
+.wk-sub{font-size:11px;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.3px;margin-top:1px;}
+.wk-pill{background:var(--accent-color);color:#000;font-weight:700;font-size:12px;padding:5px 12px;border-radius:20px;white-space:nowrap;}
+.wk-chevron{width:22px;height:22px;color:var(--text-secondary);transition:transform .2s;flex-shrink:0;}
+.wk-card.open .wk-chevron{transform:rotate(90deg);}
+.wk-body{max-height:0;overflow:hidden;transition:max-height .25s ease;}
+.wk-card.open .wk-body{max-height:600px;}
+.wk-body-inner{padding-top:12px;margin-top:10px;border-top:1px solid var(--border-color);display:flex;flex-direction:column;gap:6px;}
 
-        .ios-card {
-            background: var(--card-bg);
-            border-radius: 14px;
-            padding: 16px;
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
+.leader-row{display:flex;align-items:baseline;font-size:13px;gap:6px;}
+.leader-row .lr-label{color:var(--text-color);white-space:nowrap;}
+.leader-row .leader{flex:1;border-bottom:1px dotted var(--text-secondary);opacity:.5;margin-bottom:3px;}
+.leader-row .lr-val{color:var(--text-secondary);white-space:nowrap;font-variant-numeric:tabular-nums;}
 
-        /* FILTRY OBDOBÍ */
-        .filter-bar {
-            display: flex;
-            gap: 6px;
-            background: var(--card-bg);
-            padding: 4px;
-            border-radius: 10px;
-        }
-        .filter-btn {
-            flex: 1;
-            background: transparent;
-            border: none; color: var(--text-secondary);
-            padding: 8px; font-size: 12px; font-weight: 600;
-            border-radius: 8px; cursor: pointer;
-        }
-        .filter-btn.active {
-            background: var(--card-bg-secondary);
-            color: var(--text-color);
-        }
+/* collapsible settings section */
+.sec-card{background:var(--card-bg-secondary);border-radius:18px;overflow:hidden;}
+.sec-head{display:flex;align-items:center;gap:8px;padding:14px 16px;cursor:pointer;}
+.sec-head .sec-title{flex:1;font-size:14px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;}
+.sec-head .sec-add{width:26px;height:26px;border-radius:50%;background:var(--card-bg);border:none;color:var(--accent-color);display:flex;align-items:center;justify-content:center;}
+.sec-head .sec-chevron{width:18px;height:18px;color:var(--text-secondary);transition:transform .2s;}
+.sec-card.open .sec-chevron{transform:rotate(90deg);}
+.sec-body{max-height:0;overflow:hidden;transition:max-height .25s ease;}
+.sec-card.open .sec-body{max-height:500px;}
+.sec-body-inner{padding:0 16px 14px 16px;display:flex;flex-direction:column;gap:8px;overflow-y:auto;max-height:440px;}
+.tag-pill{background:var(--accent-color-dim);color:var(--accent-color);font-size:10px;font-weight:800;padding:3px 8px;border-radius:10px;text-transform:uppercase;}
+.mini-btn{background:var(--card-bg);border:none;color:var(--red);width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.mini-btn.g{color:var(--green);}
+.inline-add-row{display:flex;gap:8px;}
+.inline-add-row input{flex:1;}
 
-        /* iOS SWITCH */
-        .ios-switch-container {
-            background: var(--card-bg);
-            border-radius: 12px;
-            padding: 12px 16px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .ios-switch { position: relative; display: inline-block; width: 51px; height: 31px; }
-        .ios-switch input { opacity: 0; width: 0; height: 0; }
-        .slider {
-            position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
-            background-color: var(--card-bg-secondary); transition: .3s; border-radius: 31px;
-        }
-        .slider:before {
-            position: absolute; content: ""; height: 27px; width: 27px; left: 2px; bottom: 2px;
-            background-color: white; transition: .3s; border-radius: 50%;
-        }
-        input:checked + .slider { background-color: #34C759; }
-        input:checked + .slider:before { transform: translateX(20px); }
+/* theme picker floating */
+.theme-float{position:absolute;top:calc(env(safe-area-inset-top) + 16px);right:18px;display:flex;flex-direction:column;gap:8px;align-items:center;z-index:5;}
+.theme-dot{width:26px;height:26px;border-radius:50%;border:2px solid transparent;position:relative;}
+.theme-dot.active::after{content:"✓";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900;color:#000;}
 
-        .color-dot { width: 32px; height: 32px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; display: inline-block; margin-right: 8px; }
-        .color-dot.active { border-color: white; }
+.avatar-circle{width:96px;height:96px;border-radius:50%;background:var(--card-bg-secondary);display:flex;align-items:center;justify-content:center;margin:0 auto 8px auto;color:var(--accent-color);}
+.avatar-circle svg{width:48px;height:48px;}
 
-        .live-circle {
-            width: 120px; height: 120px; border-radius: 50%;
-            background: var(--accent-color); color: #000; font-size: 22px; font-weight: 700;
-            display: flex; justify-content: center; align-items: center;
-            margin: 15px auto; border: none; box-shadow: 0 0 15px rgba(255,222,77,0.2);
-        }
+/* ---------- FORM ELEMENTS ---------- */
+.ios-input,.ios-select{width:100%;background:var(--card-bg-secondary);border:1px solid var(--border-color);color:var(--text-color);padding:13px;border-radius:12px;font-size:15px;outline:none;-webkit-appearance:none;appearance:none;}
+select.ios-select{background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6'><path d='M0 0L5 6L10 0' fill='%238E8E93'/></svg>");background-repeat:no-repeat;background-position:right 14px center;}
+.ios-btn{background:var(--accent-color);color:#000;font-weight:700;padding:15px;border-radius:14px;border:none;font-size:16px;text-align:center;width:100%;cursor:pointer;}
+.ios-btn:active{opacity:.75;}
+.ios-btn-sub{background:var(--card-bg-secondary);color:var(--text-color);}
+.ios-switch-container{background:var(--card-bg-secondary);border-radius:14px;padding:14px 16px;display:flex;justify-content:space-between;align-items:center;}
+.ios-switch{position:relative;display:inline-block;width:51px;height:31px;flex-shrink:0;}
+.ios-switch input{opacity:0;width:0;height:0;}
+.slider{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background-color:var(--card-bg);transition:.3s;border-radius:31px;}
+.slider:before{position:absolute;content:"";height:27px;width:27px;left:2px;bottom:2px;background:white;transition:.3s;border-radius:50%;}
+input:checked + .slider{background-color:var(--green);}
+input:checked + .slider:before{transform:translateX(20px);}
+.row{display:flex;gap:8px;}
+.row > *{flex:1;}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.hidden{display:none !important;}
+.empty-state{text-align:center;color:var(--text-secondary);font-size:13px;padding:26px 10px;}
 
-        .hidden { display: none !important; }
-    </style>
+/* ---------- STATS ---------- */
+.filter-bar{display:flex;gap:6px;background:var(--card-bg);padding:4px;border-radius:12px;}
+.filter-btn{flex:1;background:transparent;border:none;color:var(--text-secondary);padding:9px;font-size:12px;font-weight:700;border-radius:9px;cursor:pointer;}
+.filter-btn.active{background:var(--card-bg-secondary);color:var(--text-color);}
+.period-nav{display:flex;align-items:center;justify-content:center;gap:14px;padding:2px 0 8px 0;}
+.period-nav button{background:none;border:none;color:var(--text-color);}
+.period-nav button svg{width:20px;height:20px;}
+.period-nav .period-label{font-size:15px;font-weight:700;min-width:130px;text-align:center;}
+.metric-row{display:flex;justify-content:space-between;align-items:baseline;font-size:13px;padding:7px 0;border-bottom:1px solid var(--border-color);}
+.metric-row:last-child{border-bottom:none;}
+.metric-row .m-label{color:var(--text-secondary);}
+.metric-row .m-val{font-weight:800;font-variant-numeric:tabular-nums;}
+.compare-badge{display:flex;gap:10px;}
+.compare-badge .cb-item{flex:1;background:var(--accent-color);color:#000;border-radius:14px;padding:14px;text-align:center;font-size:20px;font-weight:800;}
+.compare-caption{text-align:center;font-size:11px;color:var(--text-secondary);}
+
+/* ---------- LIVE WORKOUT ---------- */
+.editable-title{display:flex;align-items:center;justify-content:center;gap:8px;font-size:26px;font-weight:800;text-align:center;}
+.editable-title button{background:none;border:none;color:var(--text-secondary);}
+.editable-title button svg{width:16px;height:16px;}
+.editable-sub{display:flex;align-items:center;justify-content:center;gap:6px;font-size:13px;color:var(--text-secondary);text-align:center;margin-top:2px;}
+.editable-sub button{background:none;border:none;color:var(--text-secondary);}
+.editable-sub button svg{width:13px;height:13px;}
+
+.live-pill{background:var(--accent-color);color:#000;border-radius:44px;width:min(240px,70vw);padding:20px 10px;margin:16px auto;text-align:center;border:none;}
+.live-pill .lp-time{font-size:38px;font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:.5px;}
+.live-pill .lp-total{font-size:11px;font-weight:700;letter-spacing:.4px;margin-top:2px;}
+
+.timeline-row{background:var(--card-bg-secondary);border-radius:12px;padding:11px 14px;display:flex;justify-content:space-between;font-size:14px;margin-bottom:6px;}
+.timeline-row.active{background:var(--accent-color);color:#000;font-weight:700;}
+.timeline-row .tr-time{font-variant-numeric:tabular-nums;font-weight:700;}
+
+.control-row{display:flex;justify-content:space-around;padding:6px 0 4px 0;}
+.control-item{display:flex;flex-direction:column;align-items:center;gap:6px;background:none;border:none;color:var(--text-color);}
+.control-item .ci-circle{width:52px;height:52px;border-radius:50%;background:var(--card-bg-secondary);display:flex;align-items:center;justify-content:center;}
+.control-item .ci-circle svg{width:22px;height:22px;color:var(--accent-color);}
+.control-item .ci-label{font-size:10px;font-weight:700;letter-spacing:.3px;color:var(--text-secondary);}
+.control-item:active .ci-circle{opacity:.7;}
+
+/* ---------- PICKER (novy cvik) ---------- */
+.search-input-wrap{position:relative;}
+.search-input-wrap svg{position:absolute;right:14px;top:50%;transform:translateY(-50%);width:18px;height:18px;color:var(--text-secondary);}
+.search-input-wrap input{padding-right:40px;}
+.ex-pick-list{display:flex;flex-direction:column;gap:6px;max-height:180px;overflow-y:auto;}
+.ex-pick-row{background:var(--card-bg-secondary);border-radius:10px;padding:11px 14px;font-size:14px;}
+.ex-pick-row.sel{background:var(--accent-color);color:#000;font-weight:700;}
+
+.wheel-picker{display:flex;justify-content:center;gap:26px;position:relative;height:180px;margin-top:8px;}
+.wheel-col{height:180px;width:80px;overflow-y:scroll;scroll-snap-type:y mandatory;padding:72px 0;-webkit-overflow-scrolling:touch;}
+.wheel-col .w-item{height:36px;line-height:36px;text-align:center;scroll-snap-align:center;color:var(--text-secondary);font-size:16px;}
+.wheel-col .w-item.sel{color:#fff;font-weight:800;font-size:23px;}
+.wheel-highlight-line{position:absolute;top:50%;left:10px;right:10px;height:36px;margin-top:-18px;border-top:1px solid var(--border-color);border-bottom:1px solid var(--border-color);pointer-events:none;}
+.wheel-labels{display:flex;justify-content:center;gap:26px;margin-top:2px;}
+.wheel-labels span{width:80px;text-align:center;font-size:11px;color:var(--text-secondary);font-weight:700;letter-spacing:.4px;}
+
+.toast{position:fixed;bottom:calc(env(safe-area-inset-bottom) + 90px);left:50%;transform:translateX(-50%) translateY(20px);background:var(--card-bg-secondary);color:#fff;padding:12px 20px;border-radius:14px;font-size:14px;font-weight:600;z-index:9999;opacity:0;transition:.25s;pointer-events:none;box-shadow:0 4px 20px rgba(0,0,0,.4);max-width:80vw;text-align:center;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+</style>
 </head>
 <body>
 
-    <div id="login-screen">
-        <h1 style="font-size: 34px; font-weight: 800; margin-bottom: 8px;">GymBro</h1>
-        <p style="color: var(--text-secondary); margin-bottom: 24px;">Zadej kód tréninkové skupiny</p>
-        <input type="password" id="pin-input" class="ios-input" placeholder="••••" maxlength="4" style="max-width: 200px; text-align: center; font-size: 24px; margin-bottom: 24px;">
-        <button onclick="overitPin()" class="ios-btn" style="max-width: 200px;">Vstoupit</button>
+<div id="login-screen">
+  <div class="logo">🏋️‍♂️</div>
+  <h1 style="font-size:34px;font-weight:800;margin-bottom:8px;">GymBro</h1>
+  <p style="color:var(--text-secondary);margin-bottom:24px;">Zadej kód tréninkové skupiny</p>
+  <input type="password" inputmode="numeric" pattern="[0-9]*" id="pin-input" class="ios-input" placeholder="••••" maxlength="4" style="max-width:200px;text-align:center;font-size:26px;letter-spacing:8px;margin-bottom:16px;">
+  <button onclick="overitPin()" class="ios-btn" style="max-width:200px;">Vstoupit</button>
+  <div id="login-error"></div>
+</div>
+
+<!-- =============== HOME (dashboard) =============== -->
+<div id="home-screen" class="screen hidden">
+  <div class="top-icon-row">
+    <button class="icon-circle-btn" onclick="otevriStranku('page-stats')" aria-label="Statistiky"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10"/><path d="M12 20V4"/><path d="M20 20v-7"/></svg></button>
+    <button class="icon-circle-btn" onclick="otevriStranku('page-profile')" aria-label="Profil"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg></button>
+  </div>
+  <div class="scroll-area">
+    <div class="ring-wrap" id="home-ring">
+      <div class="ring-content">
+        <div class="rc-big" id="home-ring-pct">0%</div>
+        <div class="rc-sub">týdenního cíle splněno</div>
+        <div class="rc-frac" id="home-ring-frac">0 tréninků z 0</div>
+        <a href="#" class="rc-link" onclick="zmenTydenniCil();return false;">změnit cíl na tento týden</a>
+      </div>
+    </div>
+    <div id="home-recent-list" style="display:flex;flex-direction:column;gap:12px;"></div>
+  </div>
+  <div class="bottom-tab-bar">
+    <button class="tab-btn" onclick="otevriStranku('page-week')" aria-label="Historie"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h9l5 5v15H6z"/><path d="M9 13h6M9 17h6M9 9h2"/></svg></button>
+    <div class="tab-divider"></div>
+    <button class="tab-btn accent" onclick="zahajitNovyTrenink()" aria-label="Nový trénink"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
+  </div>
+</div>
+
+<!-- =============== STATISTIKY =============== -->
+<div id="page-stats" class="page">
+  <div class="page-header">
+    <button class="chevron-back" onclick="zavriStranku('page-stats')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+    <h1 class="page-title">Statistiky</h1>
+    <button class="icon-plain-btn" onclick="resetObdobiNaAktualni()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></button>
+  </div>
+  <div class="scroll-area">
+    <div class="filter-bar">
+      <button class="filter-btn active" id="btn-f-week" onclick="nastavFiltrStatistik('week')">Týden</button>
+      <button class="filter-btn" id="btn-f-month" onclick="nastavFiltrStatistik('month')">Měsíc</button>
+      <button class="filter-btn" id="btn-f-year" onclick="nastavFiltrStatistik('year')">Rok</button>
+      <button class="filter-btn" id="btn-f-all" onclick="nastavFiltrStatistik('all')">All-Time</button>
     </div>
 
-    <div id="app-interface" class="home-grid hidden">
-        <div class="menu-tile" onclick="openPage('page-stats')"><span>📊</span>Statistiky</div>
-        <div class="menu-tile" onclick="openPage('page-profile')"><span>⚙️</span>Nastavení</div>
-        <div class="menu-tile" onclick="openPage('page-week')"><span>📅</span>Historie</div>
-        <div class="menu-tile" onclick="openPage('page-live')" style="border-color: var(--accent-color);"><span>🏋️‍♂️</span>Cvičení</div>
+    <div class="period-nav" id="period-nav">
+      <button onclick="posunObdobi(-1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+      <span class="period-label" id="period-label">Týden</span>
+      <button onclick="posunObdobi(1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></button>
     </div>
 
-    <div id="page-stats" class="page">
-        <div class="page-header">
-            <h1 class="page-title">Statistiky</h1>
-            <button class="back-btn" onclick="closePage('page-stats')">Zavřít</button>
-        </div>
-        <div class="page-content">
-            <div class="filter-bar">
-                <button class="filter-btn active" id="btn-f-week" onclick="setStatFilter('week')">Týden</button>
-                <button class="filter-btn" id="btn-f-month" onclick="setStatFilter('month')">Měsíc</button>
-                <button class="filter-btn" id="btn-f-year" onclick="setStatFilter('year')">Rok</button>
-                <button class="filter-btn" id="btn-f-all" onclick="setStatFilter('all')">All-Time</button>
-            </div>
-
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                <div class="ios-card">
-                    <span style="color: var(--text-secondary); font-size: 11px;">Celkový čas</span>
-                    <span style="font-size: 20px; font-weight: 800;" id="stat-dur-total">0m</span>
-                </div>
-                <div class="ios-card">
-                    <span style="color: var(--text-secondary); font-size: 11px;">Průměrný čas</span>
-                    <span style="font-size: 20px; font-weight: 800;" id="stat-dur-avg">0m</span>
-                </div>
-            </div>
-
-            <div class="ios-card">
-                <span style="color: var(--text-secondary); font-size: 11px;">Změna oproti minulému období</span>
-                <span style="font-size: 22px; font-weight: 800;" id="stat-comparison">--</span>
-            </div>
-
-            <div class="ios-card">
-                <h3 style="font-size: 14px; margin-bottom: 6px;">Seznam cvičených cviků</h3>
-                <div id="stat-exercises-list" style="display:flex; flex-direction:column; gap:6px;"></div>
-            </div>
-        </div>
+    <div class="ring-wrap small" id="stats-ring">
+      <div class="ring-content">
+        <div class="rc-big" id="stats-ring-pct">0%</div>
+        <div class="rc-frac" id="stats-ring-frac">0 tréninků z 0</div>
+      </div>
     </div>
 
-    <div id="page-profile" class="page">
-        <div class="page-header">
-            <h1 class="page-title">Nastavení</h1>
-            <button class="back-btn" onclick="closePage('page-profile')">Zavřít</button>
-        </div>
-        <div class="page-content">
-            <div class="ios-card">
-                <span style="font-size: 14px; color: var(--text-secondary);">Uživatel: <strong style="color:#fff" id="user-display-name">...</strong></span>
-            </div>
-
-            <div class="ios-card">
-                <span style="font-size: 12px; color: var(--text-secondary); margin-bottom:4px;">Motiv aplikace</span>
-                <div>
-                    <span class="color-dot active" style="background:#FFDE4D" onclick="zmenTheme('#FFDE4D', event)"></span>
-                    <span class="color-dot" style="background:#FF453A" onclick="zmenTheme('#FF453A', event)"></span>
-                    <span class="color-dot" style="background:#30D158" onclick="zmenTheme('#30D158', event)"></span>
-                    <span class="color-dot" style="background:#0A84FF" onclick="zmenTheme('#0A84FF', event)"></span>
-                </div>
-            </div>
-
-            <div class="ios-switch-container">
-                <span style="font-size: 15px; font-weight: 500;">Režim Live stopek</span>
-                <label class="ios-switch">
-                    <input type="checkbox" id="live-mode-switch" checked onchange="toggleLiveModeView()">
-                    <span class="slider"></span>
-                </label>
-            </div>
-
-            <div class="ios-card">
-                <span style="font-size: 12px; color: var(--text-secondary);">Výchozí posilovna</span>
-                <select id="settings-default-gym" class="ios-select" onchange="ulozDefaultGym()"></select>
-            </div>
-
-            <div class="ios-card">
-                <h3 style="font-size: 15px; margin-bottom: 4px;">Tracking váhy</h3>
-                <div style="display:flex; gap:8px;">
-                    <input type="number" step="0.1" id="weight-input" class="ios-input" placeholder="kg" style="padding:10px;">
-                    <button class="ios-btn" style="width:auto; padding: 10px 20px;" onclick="logujVahu()">Zapsat</button>
-                </div>
-                <div id="weight-history-log" style="font-size:12px; color:var(--text-secondary); margin-top:4px;"></div>
-            </div>
-
-            <div class="ios-card">
-                <h3 style="font-size: 15px; margin-bottom: 4px;">Progres foto</h3>
-                <input type="file" accept="image/*" id="photo-input" class="ios-input" style="padding:8px;" onchange="nahrajProgresFoto()">
-                <div id="photo-preview-grid" style="display:grid; grid-template-columns: repeat(3, 1fr); gap:6px; margin-top:6px;"></div>
-            </div>
-
-            <div class="ios-card">
-                <span style="font-size:13px; font-weight:600;">Správa cviků skupiny</span>
-                <div style="display:flex; gap:6px; margin-top:4px;">
-                    <input type="text" id="add-cvik-inp" class="ios-input" placeholder="Nový cvik..." style="padding:8px;">
-                    <button class="ios-btn" style="width:auto; padding:0 14px;" onclick="pridatDoDb('cvik')">+</button>
-                </div>
-                <div id="settings-cviky-list" style="display:flex; flex-direction:column; gap:4px; max-height:120px; overflow-y:auto; margin-top:6px;"></div>
-            </div>
-
-            <div class="ios-card">
-                <span style="font-size:13px; font-weight:600;">Správa posiloven skupiny</span>
-                <div style="display:flex; gap:6px; margin-top:4px;">
-                    <input type="text" id="add-gym-inp" class="ios-input" placeholder="Nová gym..." style="padding:8px;">
-                    <button class="ios-btn" style="width:auto; padding:0 14px;" onclick="pridatDoDb('gym')">+</button>
-                </div>
-                <div id="settings-gyms-list" style="display:flex; flex-direction:column; gap:4px; max-height:120px; overflow-y:auto; margin-top:6px;"></div>
-            </div>
-
-            <button class="ios-btn" onclick="syncSGoogleSheets()">🔄 Synchronizovat Cloud</button>
-            <button class="ios-btn ios-btn-sub" onclick="exportDoCSV()">📤 Exportovat data (.csv)</button>
-            <button class="ios-btn ios-btn-sub" onclick="document.getElementById('import-file-trigger').click()">📥 Nahrát zálohu ze souboru</button>
-            <input type="file" id="import-file-trigger" class="hidden" accept=".csv" onchange="importZCSV(this)">
-        </div>
+    <div class="ios-card">
+      <h3>Seznam cvičených cviků</h3>
+      <div id="stat-exercises-list" style="display:flex;flex-direction:column;gap:2px;"></div>
     </div>
 
-    <div id="page-week" class="page">
-        <div class="page-header">
-            <h1 class="page-title">Historie tréninků</h1>
-            <button class="back-btn" onclick="closePage('page-week')">Zavřít</button>
-        </div>
-        <div class="page-content" id="history-box"></div>
+    <div class="ios-card">
+      <div class="metric-row"><span class="m-label">průměrná délka tréninku</span><span class="m-val" id="m-avg">-</span></div>
+      <div class="metric-row"><span class="m-label">celkový čas tréninků</span><span class="m-val" id="m-total">-</span></div>
+      <div class="metric-row"><span class="m-label">celkový počet tréninků</span><span class="m-val" id="m-count">-</span></div>
+      <div class="metric-row"><span class="m-label">celkový počet cviků</span><span class="m-val" id="m-exercises">-</span></div>
+      <div class="metric-row"><span class="m-label">celkový počet sérií</span><span class="m-val" id="m-sets">-</span></div>
+      <div class="metric-row"><span class="m-label">celkový počet opakování</span><span class="m-val" id="m-reps">-</span></div>
     </div>
 
-    <div id="page-live" class="page">
-        <div class="page-header">
-            <h1 class="page-title" id="live-main-title">Trénink</h1>
-            <button class="back-btn" onclick="stornovatNeboZavritWorkout()">Zavřít</button>
-        </div>
-        <div class="page-content">
-            
-            <div id="w-setup-zone" style="display:flex; flex-direction:column; gap:12px;">
-                <div>
-                    <label style="font-size:11px; color:var(--text-secondary);">Datum tréninku</label>
-                    <input type="date" id="w-date-field" class="ios-input">
-                </div>
-                <div>
-                    <label style="
+    <div class="compare-badge">
+      <div class="cb-item" id="cb-count">80%</div>
+      <div class="cb-item" id="cb-change">-5%</div>
+    </div>
+    <div class="compare-caption">minulé období | snížení/nárůst</div>
+  </div>
+</div>
+
+<!-- =============== PROFIL / NASTAVENÍ =============== -->
+<div id="page-profile" class="page">
+  <div class="page-header">
+    <button class="chevron-back" onclick="zavriStranku('page-profile')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+    <h1 class="page-title">Profil</h1>
+  </div>
+  <div style="position:relative;">
+    <div class="theme-float">
+      <span class="theme-dot active" data-color="#FFDE4D" style="background:#FFDE4D" onclick="zmenTheme('#FFDE4D')"></span>
+      <span class="theme-dot" data-color="#FF453A" style="background:#FF453A" onclick="zmenTheme('#FF453A')"></span>
+      <span class="theme-dot" data-color="#0A84FF" style="background:#0A84FF" onclick="zmenTheme('#0A84FF')"></span>
+      <span class="theme-dot" data-color="#30D158" style="background:#30D158" onclick="zmenTheme('#30D158')"></span>
+    </div>
+  </div>
+  <div class="scroll-area" style="padding-top:0;">
+    <div style="text-align:center;margin-top:4px;">
+      <div class="avatar-circle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg></div>
+      <div style="font-size:20px;font-weight:800;" id="profile-name">Jméno</div>
+    </div>
+
+    <div class="sec-card" id="sec-cviky">
+      <div class="sec-head" onclick="prepniSekci('sec-cviky')">
+        <span class="sec-title">Cviky</span>
+        <button class="sec-add" onclick="event.stopPropagation();otevriStranku('page-cviky')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
+        <svg class="sec-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+      </div>
+      <div class="sec-body"><div class="sec-body-inner" id="sec-cviky-body"></div></div>
+    </div>
+
+    <div class="sec-card open" id="sec-vaha">
+      <div class="sec-head" onclick="prepniSekci('sec-vaha')">
+        <span class="sec-title">Váha</span>
+        <button class="sec-add" onclick="event.stopPropagation();zeptejSeNaVahu()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
+        <svg class="sec-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+      </div>
+      <div class="sec-body"><div class="sec-body-inner" id="sec-vaha-body"></div></div>
+    </div>
+
+    <div class="sec-card open" id="sec-posilovny">
+      <div class="sec-head" onclick="prepniSekci('sec-posilovny')">
+        <span class="sec-title">Posilovny</span>
+        <button class="sec-add" onclick="event.stopPropagation();zeptejSeNaPosilovnu()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
+        <svg class="sec-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+      </div>
+      <div class="sec-body"><div class="sec-body-inner" id="sec-posilovny-body"></div></div>
+    </div>
+
+    <div class="sec-card open" id="sec-poznamky">
+      <div class="sec-head" onclick="prepniSekci('sec-poznamky')">
+        <span class="sec-title">Poznámky</span>
+        <button class="sec-add" onclick="event.stopPropagation();document.getElementById('note-input').click()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
+        <svg class="sec-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+      </div>
+      <div class="sec-body"><div class="sec-body-inner" id="sec-poznamky-body"></div></div>
+    </div>
+    <input type="file" id="note-input" class="hidden" onchange="pridatPoznamku()">
+
+    <div class="sec-card open" id="sec-foto">
+      <div class="sec-head" onclick="prepniSekci('sec-foto')">
+        <span class="sec-title">Progres foto</span>
+        <button class="sec-add" onclick="event.stopPropagation();document.getElementById('photo-input').click()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
+        <svg class="sec-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+      </div>
+      <div class="sec-body"><div class="sec-body-inner">
+        <div id="photo-preview-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;"></div>
+      </div></div>
+    </div>
+    <input type="file" accept="image/*" id="photo-input" class="hidden" onchange="nahrajProgresFoto()">
+
+    <div class="ios-card">
+      <span class="label-sm">Výchozí posilovna</span>
+      <select id="settings-default-gym" class="ios-select" onchange="ulozDefaultGym()"></select>
+    </div>
+
+    <div class="ios-switch-container">
+      <span style="font-size:15px;font-weight:600;">Režim Live stopek</span>
+      <label class="ios-switch">
+        <input type="checkbox" id="live-mode-switch" checked onchange="prepniVychoziRezim()">
+        <span class="slider"></span>
+      </label>
+    </div>
+
+    <button class="ios-btn" onclick="synchronizujCloud()">🔄 Synchronizovat Cloud</button>
+    <div id="sync-status" style="font-size:12px;color:var(--text-secondary);text-align:center;"></div>
+    <button class="ios-btn ios-btn-sub" onclick="exportujCSV()">📤 Exportovat data (.csv)</button>
+    <button class="ios-btn ios-btn-sub" onclick="document.getElementById('import-file-trigger').click()">📥 Nahrát zálohu ze souboru</button>
+    <input type="file" id="import-file-trigger" class="hidden" accept=".csv" onchange="importujCSV(this)">
+  </div>
+</div>
+
+<!-- =============== CVIKY (podstránka správy databáze cviků) =============== -->
+<div id="page-cviky" class="page">
+  <div class="page-header">
+    <button class="chevron-back" onclick="zavriStranku('page-cviky')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+    <h1 class="page-title">Cviky</h1>
+  </div>
+  <div class="scroll-area">
+    <div class="inline-add-row">
+      <input type="text" id="add-cvik-inp" class="ios-input" placeholder="Nový cvik...">
+      <button class="icon-circle-btn" style="width:48px;height:48px;" onclick="pridatDoDatabaze('cvik')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
+    </div>
+    <div id="cviky-full-list" style="display:flex;flex-direction:column;gap:8px;"></div>
+  </div>
+</div>
+
+<!-- =============== HISTORIE =============== -->
+<div id="page-week" class="page">
+  <div class="page-header">
+    <button class="chevron-back" onclick="zavriStranku('page-week')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+    <h1 class="page-title">Historie</h1>
+  </div>
+  <div class="scroll-area" id="history-box"></div>
+</div>
+
+<!-- =============== CVIČENÍ / LIVE =============== -->
+<div id="page-live" class="page">
+  <div class="page-header">
+    <button class="chevron-back" onclick="stornovatNeboZavritWorkout()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+    <h1 class="page-title" style="text-align:center;">Trénink</h1>
+    <span style="width:24px;"></span>
+  </div>
+
+  <div class="scroll-area" style="padding-top:0;">
+
+    <div id="w-setup-zone" style="display:flex;flex-direction:column;gap:12px;">
+      <div>
+        <label class="label-sm">Datum tréninku</label>
+        <input type="date" id="w-date-field" class="ios-input">
+      </div>
+      <div>
+        <label class="label-sm">Název / zaměření (např. PUSH)</label>
+        <input type="text" id="w-name-field" class="ios-input" placeholder="FULLBODY">
+      </div>
+      <div>
+        <label class="label-sm">Posilovna</label>
+        <select id="w-gym-field" class="ios-select"></select>
+      </div>
+      <div class="ios-switch-container">
+        <span style="font-size:15px;font-weight:600;">Live stopky</span>
+        <label class="ios-switch">
+          <input type="checkbox" id="w-live-switch" checked>
+          <span class="slider"></span>
+        </label>
+      </div>
+      <button class="ios-btn" onclick="potvrdSpusteniTreninku()">Zahájit trénink</button>
+    </div>
+
+    <div id="w-active-zone" class="hidden" style="display:flex;flex-direction:column;">
+      <div class="editable-title">
+        <span id="w-title-display">FULLBODY</span>
+        <button onclick="upravNazevTreninku()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button>
+      </div>
+      <div class="editable-sub">
+        <span id="w-date-display">-</span>
+      </div>
+      <div class="editable-sub">
+        <span id="w-gym-display">-</span>
+        <button onclick="upravPosilovnuTreninku()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button>
+      </div>
+
+      <div class="live-pill">
+        <div class="lp-time" id="w-live-timer">0:00</div>
+        <div class="lp-total"><span id="w-total-timer">0:00:00</span> CELKOVÝ ČAS</div>
+      </div>
+
+      <div id="w-current-ex-label" style="text-align:center;font-size:12px;color:var(--text-secondary);margin-bottom:10px;">Zatím nevybrán cvik — začni s NOVÝ CVIK</div>
+
+      <div class="control-row">
+        <button class="control-item" onclick="liveOznacPauzu()">
+          <span class="ci-circle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14"/></svg></span>
+          <span class="ci-label">PAUZA</span>
+        </button>
+        <button class="control-item" onclick="otevriVyberCviku()">
+          <span class="ci-circle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span>
+          <span class="ci-label">NOVÝ CVIK</span>
+        </button>
+        <button class="control-item" onclick="liveDalsiSerie()">
+          <span class="ci-circle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+          <span class="ci-label">PŘÍŠTÍ SÉRIE</span>
+        </button>
+      </div>
+
+      <div class="ios-card" style="margin-top:10px;">
+        <h3>Průběh tréninku</h3>
+        <div id="w-timeline"></div>
+      </div>
+
+      <button class="ios-btn" style="background:var(--green);margin-top:14px;" onclick="dokoncitTrenink()">✅ Dokončit trénink</button>
+    </div>
+  </div>
+</div>
+
+<!-- =============== NOVY CVIK (picker) =============== -->
+<div id="page-picker" class="page">
+  <div class="page-header">
+    <button class="chevron-back" onclick="zavriStranku('page-picker')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+    <h1 class="page-title">nový cvik</h1>
+    <span style="width:24px;"></span>
+  </div>
+  <div class="scroll-area" style="padding-top:0;">
+    <div class="search-input-wrap">
+      <input type="text" id="picker-search" class="ios-input" placeholder="Hledat cvik..." oninput="vykresliPickerSeznam()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+    </div>
+    <div class="ex-pick-list" id="picker-list"></div>
+
+    <div class="wheel-picker">
+      <div class="wheel-col" id="wheel-serie"></div>
+      <div class="wheel-col" id="wheel-opak"></div>
+      <div class="wheel-highlight-line"></div>
+    </div>
+    <div class="wheel-labels"><span>SÉRIE</span><span>OPAKOVÁNÍ</span></div>
+
+    <div>
+      <label class="label-sm">Váha (kg)</label>
+      <input type="number" step="0.5" id="w-pick-weight" class="ios-input" placeholder="0">
+    </div>
+
+    <button class="ios-btn" onclick="potvrdVyberCviku()">✓ Potvrdit cvik</button>
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+/* =========================================================
+   ICONY (jednoduche inline SVG, stroke=currentColor)
+   ========================================================= */
+var ICON_CHART = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10"/><path d="M12 20V4"/><path d="M20 20v-7"/></svg>';
+var ICON_PERSON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>';
+var ICON_PERSON_BIG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>';
+var ICON_DOC = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h9l5 5v15H6z"/><path d="M9 13h6M9 17h6M9 9h2"/></svg>';
+var ICON_PLUS = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>';
+var ICON_PLUS_SM = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>';
+var ICON_MINUS = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14"/></svg>';
+var ICON_ARROW_RIGHT = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
+var ICON_BACK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>';
+var ICON_CHEVRON_LEFT = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>';
+var ICON_CHEVRON_RIGHT = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>';
+var ICON_CHEVRON_SM = '<svg class="sec-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>';
+var ICON_CALENDAR = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>';
+var ICON_PENCIL = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>';
+var ICON_SEARCH = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>';
+var ICON_CHECK_INLINE = '✓';
+</script>
+
+<script>
+/* =========================================================
+   GYMBRO - kompletni logika aplikace
+   ========================================================= */
+
+var GAS_URL = "https://script.google.com/macros/s/AKfycby2Jq6mnvMbk9IvBFuPV4K_zXIL3GbZjlSLhMDY62zWJIhvTrHLbvBMlOG1u3q6zlL1hQ/exec";
+var ZNAME_PINY = { "4821": "Jan Novák", "9537": "Petr R." };
+var VYCHOZI_CVIKY = ["Chin Up","Bicep Hammer","Tricep Pulldown","Chest Press","Bench","Leg Press","Reverse Fly"];
+var VYCHOZI_POSILOVNY = ["Big One Fitness Brno Václavská","FormFactory Brno Veveří","Fitcentrum Olympia Tišnov"];
+
+var STATE = {
+  user: null,
+  cviky: [],
+  posilovny: [],
+  treninky: [],
+  vahy: [],
+  fotky: [],
+  poznamky: [],
+  cile: [],
+  nastaveni: { theme: "#FFDE4D", defaultGym: "", liveMode: true }
+};
+
+var LIVE = null;
+var LIVE_INTERVAL = null;
+var STAT_FILTR = "week";
+var OBDOBI_POSUN = 0;
+var PICKER_VYBER = null;
+var OTEVRENE_KARTY = {};
+
+/* ---------- PERSISTENCE ---------- */
+function ulozStavLokalne(){
+  try{ localStorage.setItem("gymbro_state_v2", JSON.stringify(STATE)); }catch(e){ console.warn("Ulozeni selhalo", e); }
+}
+function nactiStavLokalne(){
+  try{
+    var raw = localStorage.getItem("gymbro_state_v2");
+    if(raw){ STATE = Object.assign(STATE, JSON.parse(raw)); }
+  }catch(e){ console.warn("Nacteni selhalo", e); }
+  if(!STATE.cviky || STATE.cviky.length===0) STATE.cviky = VYCHOZI_CVIKY.slice();
+  if(!STATE.posilovny || STATE.posilovny.length===0) STATE.posilovny = VYCHOZI_POSILOVNY.slice();
+  if(!STATE.treninky) STATE.treninky = [];
+  if(!STATE.vahy) STATE.vahy = [];
+  if(!STATE.fotky) STATE.fotky = [];
+  if(!STATE.poznamky) STATE.poznamky = [];
+  if(!STATE.cile) STATE.cile = [];
+  if(!STATE.nastaveni) STATE.nastaveni = { theme:"#FFDE4D", defaultGym:"", liveMode:true };
+}
+
+/* ---------- START APLIKACE (okamzite, fetch az na pozadi) ---------- */
+function zprovoznitAplikaci(){
+  nactiStavLokalne();
+  document.getElementById("login-screen").classList.add("hidden");
+  document.getElementById("home-screen").classList.remove("hidden");
+  aplikujTheme(STATE.nastaveni.theme);
+  document.getElementById("live-mode-switch").checked = STATE.nastaveni.liveMode !== false;
+  naplnSelecty();
+  vykresliDomovskouObrazovku();
+  vykresliNastaveni();
+  vykresliHistorii();
+  overitJmenoNaPozadi();
+}
+
+function overitPin(){
+  var pin = document.getElementById("pin-input").value.trim();
+  var chyba = document.getElementById("login-error");
+  if(!/^[0-9]{4}$/.test(pin)){ chyba.textContent = "Zadej 4místný číselný kód."; return; }
+  chyba.textContent = "";
+  STATE.user = { pin: pin, jmeno: ZNAME_PINY[pin] || ("Skupina " + pin) };
+  ulozStavLokalne();
+  zprovoznitAplikaci();
+}
+
+function overitJmenoNaPozadi(){
+  if(!STATE.user) return;
+  fetch(GAS_URL + "?action=whoami&pin=" + encodeURIComponent(STATE.user.pin))
+    .then(function(r){ return r.json(); })
+    .catch(function(){ return null; })
+    .then(function(data){
+      if(data && data.jmeno && data.jmeno !== STATE.user.jmeno){
+        STATE.user.jmeno = data.jmeno;
+        document.getElementById("profile-name").textContent = data.jmeno;
+        ulozStavLokalne();
+      }
+    });
+}
+
+/* ---------- NAVIGACE ---------- */
+function otevriStranku(id){
+  document.getElementById(id).classList.add("active");
+  if(id === "page-stats"){ OBDOBI_POSUN = 0; prepocitejStatistiky(); }
+  if(id === "page-week"){ vykresliHistorii(); }
+  if(id === "page-profile"){ vykresliNastaveni(); }
+  if(id === "page-cviky"){ vykresliCvikyPodstranku(); }
+}
+function zavriStranku(id){ document.getElementById(id).classList.remove("active"); }
+function stornovatNeboZavritWorkout(){
+  if(LIVE && LIVE.aktivni){
+    if(!confirm("Trénink ještě neskončil. Opravdu zavřít a zahodit rozpracovaný trénink?")) return;
+    if(LIVE_INTERVAL) clearInterval(LIVE_INTERVAL);
+    LIVE = null;
+  }
+  zavriStranku("page-live");
+}
+function prepniSekci(id){
+  document.getElementById(id).classList.toggle("open");
+}
+
+/* ---------- SELECTY ---------- */
+function naplnSelecty(){
+  [document.getElementById("settings-default-gym"), document.getElementById("w-gym-field")].forEach(function(sel){
+    if(!sel) return;
+    var puvodni = sel.value;
+    sel.innerHTML = "";
+    STATE.posilovny.forEach(function(g){
+      var opt = document.createElement("option"); opt.value=g; opt.textContent=g; sel.appendChild(opt);
+    });
+    if(STATE.posilovny.indexOf(puvodni) >= 0) sel.value = puvodni;
+  });
+  if(STATE.nastaveni.defaultGym && STATE.posilovny.indexOf(STATE.nastaveni.defaultGym) >= 0){
+    document.getElementById("settings-default-gym").value = STATE.nastaveni.defaultGym;
+    document.getElementById("w-gym-field").value = STATE.nastaveni.defaultGym;
+  }
+}
+
+/* ================== HOME DASHBOARD ================== */
+function vykresliDomovskouObrazovku(){
+  var klic = ziskejKlicTydne();
+  var c = najdiNeboVytvorCil(klic);
+  var pct = c.cilTreninku > 0 ? Math.min(100, Math.round((c.odcviceno / c.cilTreninku) * 100)) : 0;
+  document.getElementById("home-ring-pct").textContent = pct + "%";
+  document.getElementById("home-ring-frac").textContent = c.odcviceno + " tréninků z " + c.cilTreninku;
+  vykresliRing(document.getElementById("home-ring"), pct);
+
+  var box = document.getElementById("home-recent-list");
+  box.innerHTML = "";
+  var razene = STATE.treninky.slice().sort(function(a,b){ return novyDatumTimestamp(b.datum) - novyDatumTimestamp(a.datum); }).slice(0,4);
+  if(razene.length === 0){
+    box.innerHTML = "<div class='empty-state'>Zatím žádné tréninky. Klepni na + a začni cvičit 💪</div>";
+    return;
+  }
+  razene.forEach(function(t, i){ box.appendChild(vytvorWorkoutKartu(t, i===0)); });
+}
+
+function vytvorWorkoutKartu(t, vychoziOtevreno){
+  var card = document.createElement("div");
+  var otevreno = OTEVRENE_KARTY.hasOwnProperty(t.id) ? OTEVRENE_KARTY[t.id] : !!vychoziOtevreno;
+  card.className = "wk-card" + (otevreno ? " open" : "");
+  var exHtml = "";
+  t.cviky.forEach(function(c){
+    var pocetSerii = c.serie.length;
+    var opak = pocetSerii ? c.serie[0].opak : "-";
+    var vahy = c.serie.map(function(s){ return s.vaha; }).filter(function(v){ return v!==null && v!==undefined; });
+    var vahaTxt = vahy.length ? (vahy[vahy.length-1] + "kg") : "-";
+    exHtml += "<div class='leader-row'><span class='lr-label'>" + pocetSerii + "×" + opak + " " + escapujHtml(c.nazev) + "</span><span class='leader'></span><span class='lr-val'>" + vahaTxt + "</span></div>";
+  });
+  card.innerHTML =
+    "<div class='wk-top'>" +
+      "<div class='wk-date-block'><div class='wk-date'>" + formatujDatumCz(t.datum) + "</div>" +
+      "<div class='wk-sub'>" + escapujHtml(t.nazev) + " - " + escapujHtml(t.posilovna) + "</div></div>" +
+      "<div class='wk-pill'>" + formatujCasHM(t.celkovyCasSec) + "</div>" +
+      "<span class='wk-chevron'>" + ICON_CHEVRON_RIGHT_STR() + "</span>" +
+    "</div>" +
+    "<div class='wk-body'><div class='wk-body-inner'>" + (exHtml || "<span class='empty-state' style='padding:6px 0;'>Bez zaznamenaných cviků.</span>") + "</div></div>";
+  card.querySelector(".wk-top").addEventListener("click", function(){
+    card.classList.toggle("open");
+    OTEVRENE_KARTY[t.id] = card.classList.contains("open");
+  });
+  return card;
+}
+function ICON_CHEVRON_RIGHT_STR(){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>'; }
+
+/* generic conic-gradient ring renderer */
+function vykresliRing(el, pct){
+  var deg = Math.max(0, Math.min(100, pct)) * 3.6;
+  el.style.background = "conic-gradient(var(--accent-color) " + deg + "deg, var(--card-bg-secondary) 0deg)";
+}
+
+/* ================== HISTORIE (plna stranka) ================== */
+function vykresliHistorii(){
+  var box = document.getElementById("history-box");
+  box.innerHTML = "";
+  if(STATE.treninky.length === 0){
+    box.innerHTML = "<div class='empty-state'>Zatím žádné tréninky. Jdi cvičit! 💪</div>";
+    return;
+  }
+  var razene = STATE.treninky.slice().sort(function(a,b){ return novyDatumTimestamp(b.datum) - novyDatumTimestamp(a.datum); });
+  razene.forEach(function(t){ box.appendChild(vytvorWorkoutKartu(t, false)); });
+}
+
+/* ================== CVICENI / LIVE ================== */
+var STEP = { serie: 3, opak: 10 };
+
+function zahajitNovyTrenink(){
+  otevriStranku("page-live");
+  document.getElementById("w-setup-zone").classList.remove("hidden");
+  document.getElementById("w-active-zone").classList.add("hidden");
+  if(!document.getElementById("w-date-field").value){
+    document.getElementById("w-date-field").valueAsDate = new Date();
+  }
+  document.getElementById("w-live-switch").checked = STATE.nastaveni.liveMode !== false;
+}
+
+function potvrdSpusteniTreninku(){
+  var datum = document.getElementById("w-date-field").value || novyDatumString();
+  var nazev = (document.getElementById("w-name-field").value.trim() || "TRÉNINK").toUpperCase();
+  var gym = document.getElementById("w-gym-field").value || "-";
+  var live = document.getElementById("w-live-switch").checked;
+
+  LIVE = {
+    aktivni: true, live: live, datum: datum, nazev: nazev, gym: gym,
+    casStartMs: Date.now(),
+    segTyp: "cvik", segLabel: "Warm Up", segStartMs: Date.now(),
+    aktualniCvik: null, aktualniOpak: STEP.opak, aktualniVaha: null,
+    log: [], vysledky: {}
+  };
+
+  document.getElementById("w-title-display").textContent = LIVE.nazev;
+  document.getElementById("w-date-display").textContent = formatujDatumCz(LIVE.datum);
+  document.getElementById("w-gym-display").textContent = LIVE.gym;
+  document.getElementById("w-setup-zone").classList.add("hidden");
+  document.getElementById("w-active-zone").classList.remove("hidden");
+  document.getElementById("w-current-ex-label").textContent = "Zatím nevybrán cvik — začni s NOVÝ CVIK";
+  document.getElementById("w-timeline").innerHTML = "";
+
+  if(LIVE_INTERVAL) clearInterval(LIVE_INTERVAL);
+  LIVE_INTERVAL = setInterval(aktualizujZiveCasy, 500);
+  aktualizujZiveCasy();
+}
+
+function upravNazevTreninku(){
+  if(!LIVE) return;
+  var novy = prompt("Název tréninku:", LIVE.nazev);
+  if(novy === null || !novy.trim()) return;
+  LIVE.nazev = novy.trim().toUpperCase();
+  document.getElementById("w-title-display").textContent = LIVE.nazev;
+}
+function upravPosilovnuTreninku(){
+  if(!LIVE) return;
+  var novy = prompt("Posilovna:", LIVE.gym);
+  if(novy === null || !novy.trim()) return;
+  LIVE.gym = novy.trim();
+  document.getElementById("w-gym-display").textContent = LIVE.gym;
+}
+
+function aktualizujZiveCasy(){
+  if(!LIVE || !LIVE.aktivni) return;
+  var segSec = Math.floor((Date.now() - LIVE.segStartMs) / 1000);
+  var totalSec = Math.floor((Date.now() - LIVE.casStartMs) / 1000);
+  document.getElementById("w-live-timer").textContent = formatujCasMMSS(segSec);
+  document.getElementById("w-total-timer").textContent = formatujCasHMS(totalSec);
+}
+
+function ukonciAktualniSegment(){
+  var elapsedSec = Math.floor((Date.now() - LIVE.segStartMs) / 1000);
+  pridejDoLogu(LIVE.segLabel, elapsedSec, LIVE.segTyp);
+  if(LIVE.segTyp === "cvik" && LIVE.aktualniCvik){
+    if(!LIVE.vysledky[LIVE.aktualniCvik]) LIVE.vysledky[LIVE.aktualniCvik] = [];
+    LIVE.vysledky[LIVE.aktualniCvik].push({ opak: LIVE.aktualniOpak, vaha: LIVE.aktualniVaha, casSerieSec: elapsedSec, casPauzySec: 0 });
+  } else if(LIVE.segTyp === "pauza" && LIVE.aktualniCvik){
+    var pole = LIVE.vysledky[LIVE.aktualniCvik];
+    if(pole && pole.length) pole[pole.length-1].casPauzySec = elapsedSec;
+  }
+  return elapsedSec;
+}
+
+function pridejDoLogu(nazev, casSec, typ){
+  LIVE.log.push({ nazev: nazev, casSec: casSec, typ: typ });
+  var box = document.getElementById("w-timeline");
+  var row = document.createElement("div");
+  row.className = "timeline-row";
+  row.innerHTML = "<span>" + escapujHtml(nazev) + "</span><span class='tr-time'>" + formatujCasMMSS(casSec) + "</span>";
+  box.appendChild(row);
+  box.scrollTop = box.scrollHeight;
+}
+
+function liveOznacPauzu(){
+  if(!LIVE) return;
+  if(LIVE.segTyp === "pauza"){ zobrazToast("Už probíhá pauza."); return; }
+  ukonciAktualniSegment();
+  LIVE.segTyp = "pauza"; LIVE.segLabel = "Pauza"; LIVE.segStartMs = Date.now();
+  aktualizujZiveCasy();
+}
+
+function liveDalsiSerie(){
+  if(!LIVE) return;
+  if(!LIVE.aktualniCvik){ zobrazToast("Nejdřív vyber cvik přes NOVÝ CVIK."); return; }
+  ukonciAktualniSegment();
+  LIVE.segTyp = "cvik"; LIVE.segLabel = LIVE.aktualniCvik; LIVE.segStartMs = Date.now();
+  aktualizujZiveCasy();
+  zobrazToast("Nová série: " + LIVE.aktualniCvik);
+}
+
+function otevriVyberCviku(){
+  if(!LIVE){ return; }
+  PICKER_VYBER = LIVE.aktualniCvik;
+  document.getElementById("picker-search").value = "";
+  document.getElementById("w-pick-weight").value = LIVE.aktualniVaha || "";
+  vykresliPickerSeznam();
+  vytvorWheel("wheel-serie", 1, 12, STEP.serie);
+  vytvorWheel("wheel-opak", 1, 30, STEP.opak);
+  otevriStranku("page-picker");
+}
+function vykresliPickerSeznam(){
+  var dotaz = document.getElementById("picker-search").value.trim().toLowerCase();
+  var box = document.getElementById("picker-list");
+  box.innerHTML = "";
+  var filtr = STATE.cviky.filter(function(c){ return c.toLowerCase().indexOf(dotaz) >= 0; });
+  if(filtr.length === 0){ box.innerHTML = "<div class='empty-state'>Žádný cvik nenalezen.</div>"; return; }
+  filtr.forEach(function(c){
+    var row = document.createElement("div");
+    row.className = "ex-pick-row" + (c === PICKER_VYBER ? " sel" : "");
+    row.textContent = c;
+    row.onclick = function(){
+      PICKER_VYBER = c;
+      box.querySelectorAll(".ex-pick-row").forEach(function(r){ r.classList.remove("sel"); });
+      row.classList.add("sel");
+    };
+    box.appendChild(row);
+  });
+}
+function potvrdVyberCviku(){
+  if(!PICKER_VYBER){ zobrazToast("Vyber cvik ze seznamu."); return; }
+  var serieVal = precteWheel("wheel-serie", 1);
+  var opakVal = precteWheel("wheel-opak", 1);
+  var vaha = parseFloat(document.getElementById("w-pick-weight").value);
+  STEP.serie = serieVal; STEP.opak = opakVal;
+
+  if(LIVE){
+    ukonciAktualniSegment();
+    LIVE.aktualniCvik = PICKER_VYBER;
+    LIVE.aktualniOpak = opakVal;
+    LIVE.aktualniVaha = isNaN(vaha) ? null : vaha;
+    LIVE.segTyp = "cvik"; LIVE.segLabel = PICKER_VYBER; LIVE.segStartMs = Date.now();
+    aktualizujZiveCasy();
+    document.getElementById("w-current-ex-label").textContent = "Aktuální cvik: " + PICKER_VYBER + " (" + serieVal + "×" + opakVal + (isNaN(vaha)?"":", " + vaha + "kg") + ")";
+  }
+  zavriStranku("page-picker");
+  zobrazToast("Nastaveno: " + PICKER_VYBER);
+}
+
+/* --- wheel picker helpery --- */
+function vytvorWheel(id, min, max, vychozi){
+  var el = document.getElementById(id);
+  el.innerHTML = "";
+  for(var i=min;i<=max;i++){
+    var item = document.createElement("div");
+    item.className = "w-item"; item.textContent = i; item.dataset.val = i;
+    el.appendChild(item);
+  }
+  el.dataset.min = min; el.dataset.max = max;
+  var cil = Math.max(min, Math.min(max, vychozi || min));
+  el.scrollTop = (cil - min) * 36;
+  oznacVybranouPolozkuWheel(el);
+  el.onscroll = function(){ oznacVybranouPolozkuWheel(el); };
+}
+function oznacVybranouPolozkuWheel(el){
+  var min = parseInt(el.dataset.min,10);
+  var idx = Math.round(el.scrollTop / 36);
+  el.querySelectorAll(".w-item").forEach(function(it, i){
+    it.classList.toggle("sel", i === idx);
+  });
+}
+function precteWheel(id, min){
+  var el = document.getElementById(id);
+  var mn = parseInt(el.dataset.min,10) || min;
+  var mx = parseInt(el.dataset.max,10) || 99;
+  var idx = Math.round(el.scrollTop / 36);
+  return Math.max(mn, Math.min(mx, mn + idx));
+}
+
+function dokoncitTrenink(){
+  if(!LIVE || !LIVE.aktivni) return;
+  ukonciAktualniSegment();
+  var celkemSec = Math.floor((Date.now() - LIVE.casStartMs) / 1000);
+  var cvikyPole = [];
+  Object.keys(LIVE.vysledky).forEach(function(nazev){ cvikyPole.push({ nazev: nazev, serie: LIVE.vysledky[nazev] }); });
+
+  var trenink = {
+    id: "t_" + Date.now(), datum: LIVE.datum, nazev: LIVE.nazev, posilovna: LIVE.gym,
+    mod: LIVE.live ? "live" : "text", celkovyCasSec: celkemSec, cviky: cvikyPole, log: LIVE.log, synced: false
+  };
+  STATE.treninky.unshift(trenink);
+  aktualizujTydenniCilPoTreninku(trenink);
+  ulozStavLokalne();
+
+  if(LIVE_INTERVAL) clearInterval(LIVE_INTERVAL);
+  LIVE = null;
+  document.getElementById("w-name-field").value = "";
+  zobrazToast("Trénink uložen ✅");
+  vykresliHistorii();
+  vykresliDomovskouObrazovku();
+  zavriStranku("page-live");
+}
+
+/* ================== STATISTIKY ================== */
+function nastavFiltrStatistik(f){
+  STAT_FILTR = f; OBDOBI_POSUN = 0;
+  ["week","month","year","all"].forEach(function(x){ document.getElementById("btn-f-"+x).classList.toggle("active", x===f); });
+  document.getElementById("period-nav").style.visibility = f === "all" ? "hidden" : "visible";
+  prepocitejStatistiky();
+}
+function posunObdobi(delta){
+  if(STAT_FILTR === "all") return;
+  OBDOBI_POSUN = Math.max(0, OBDOBI_POSUN - delta);
+  prepocitejStatistiky();
+}
+function resetObdobiNaAktualni(){ OBDOBI_POSUN = 0; prepocitejStatistiky(); }
+
+function rozsahObdobi(filtr, posun){
+  posun = posun || 0;
+  var ted = new Date(); var od, doD;
+  if(filtr === "week"){
+    var den = (ted.getDay() + 6) % 7;
+    od = new Date(ted); od.setDate(ted.getDate() - den - (posun*7)); od.setHours(0,0,0,0);
+    doD = new Date(od); doD.setDate(od.getDate() + 7);
+  } else if(filtr === "month"){
+    od = new Date(ted.getFullYear(), ted.getMonth() - posun, 1);
+    doD = new Date(ted.getFullYear(), ted.getMonth() - posun + 1, 1);
+  } else if(filtr === "year"){
+    od = new Date(ted.getFullYear() - posun, 0, 1);
+    doD = new Date(ted.getFullYear() - posun + 1, 0, 1);
+  } else { od = new Date(2000,0,1); doD = new Date(2100,0,1); }
+  return { od: od, doD: doD };
+}
+function popisekObdobi(filtr, posun){
+  var r = rozsahObdobi(filtr, posun);
+  var MESICE = ["leden","únor","březen","duben","květen","červen","červenec","srpen","září","říjen","listopad","prosinec"];
+  if(filtr === "week"){
+    return pad2(r.od.getDate()) + "." + pad2(r.od.getMonth()+1) + ". – " + pad2(new Date(r.doD-86400000).getDate()) + "." + pad2(new Date(r.doD-86400000).getMonth()+1) + ".";
+  } else if(filtr === "month"){
+    return MESICE[r.od.getMonth()] + " " + r.od.getFullYear();
+  } else if(filtr === "year"){
+    return "" + r.od.getFullYear();
+  }
+  return "Celková historie";
+}
+function treninkyVObdobi(rozsah){
+  return STATE.treninky.filter(function(t){ var d = novyDatumObjekt(t.datum); return d >= rozsah.od && d < rozsah.doD; });
+}
+
+function prepocitejStatistiky(){
+  document.getElementById("period-label").textContent = popisekObdobi(STAT_FILTR, OBDOBI_POSUN);
+  var rozsah = rozsahObdobi(STAT_FILTR, OBDOBI_POSUN);
+  var aktualni = treninkyVObdobi(rozsah);
+
+  var celkemSec = aktualni.reduce(function(s,t){ return s + t.celkovyCasSec; }, 0);
+  var prumerSec = aktualni.length ? Math.round(celkemSec/aktualni.length) : 0;
+  var pocetCviku = 0, pocetSerii = 0, pocetOpak = 0;
+  aktualni.forEach(function(t){
+    t.cviky.forEach(function(c){
+      pocetCviku++;
+      c.serie.forEach(function(s){ pocetSerii++; pocetOpak += (s.opak||0); });
+    });
+  });
+
+  document.getElementById("m-avg").textContent = formatujCasHM(prumerSec);
+  document.getElementById("m-total").textContent = formatujCasHM(celkemSec);
+  document.getElementById("m-count").textContent = aktualni.length;
+  document.getElementById("m-exercises").textContent = pocetCviku;
+  document.getElementById("m-sets").textContent = pocetSerii;
+  document.getElementById("m-reps").textContent = pocetOpak;
+
+  // cil tydne v danem obdobi (jen pro filtr week zobrazime presny cil, jinak pomer k poctu treninku)
+  var cilPocet = STAT_FILTR === "week" ? najdiNeboVytvorCil(ziskejKlicTydne()).cilTreninku : Math.max(aktualni.length, 1);
+  var pct = Math.min(100, Math.round((aktualni.length / cilPocet) * 100));
+  document.getElementById("stats-ring-pct").textContent = pct + "%";
+  document.getElementById("stats-ring-frac").textContent = aktualni.length + " tréninků z " + cilPocet;
+  vykresliRing(document.getElementById("stats-ring"), pct);
+
+  var cbCount = document.getElementById("cb-count");
+  var cbChange = document.getElementById("cb-change");
+  if(STAT_FILTR === "all"){
+    cbCount.textContent = "--"; cbChange.textContent = "--";
+  } else {
+    var minuly = treninkyVObdobi(rozsahObdobi(STAT_FILTR, OBDOBI_POSUN+1));
+    var zmena = minuly.length === 0 ? (aktualni.length>0?100:0) : Math.round(((aktualni.length - minuly.length)/minuly.length)*100);
+    cbCount.textContent = aktualni.length + "×";
+    cbChange.textContent = (zmena>=0?"+":"") + zmena + "%";
+  }
+
+  var pocty = {};
+  aktualni.forEach(function(t){ t.cviky.forEach(function(c){ pocty[c.nazev] = (pocty[c.nazev]||0) + 1; }); });
+  var seznam = Object.keys(pocty).sort(function(a,b){ return pocty[b]-pocty[a]; });
+  var listEl = document.getElementById("stat-exercises-list");
+  listEl.innerHTML = "";
+  if(seznam.length === 0){
+    listEl.innerHTML = "<div class='empty-state'>V tomto období žádné cviky.</div>";
+  } else {
+    seznam.forEach(function(n){
+      var row = document.createElement("div");
+      row.className = "leader-row";
+      row.innerHTML = "<span class='lr-label'>" + escapujHtml(n) + "</span><span class='leader'></span><span class='lr-val'>" + pocty[n] + "×</span>";
+      listEl.appendChild(row);
+    });
+  }
+}
+
+/* ---------- TYDENNI CIL ---------- */
+function ziskejKlicTydne(datum){
+  var d = datum ? novyDatumObjekt(datum) : new Date();
+  var onejan = new Date(d.getFullYear(),0,1);
+  var tyden = Math.ceil((((d - onejan)/86400000) + onejan.getDay() + 1) / 7);
+  return d.getFullYear() + "-" + tyden;
+}
+function najdiNeboVytvorCil(klic){
+  var c = STATE.cile.find(function(x){ return x.klic === klic; });
+  if(!c){ c = { klic: klic, cilTreninku: 4, odcviceno: 0 }; STATE.cile.push(c); }
+  return c;
+}
+function aktualizujTydenniCilPoTreninku(trenink){
+  var c = najdiNeboVytvorCil(ziskejKlicTydne(trenink.datum));
+  c.odcviceno += 1;
+}
+function zmenTydenniCil(){
+  var c = najdiNeboVytvorCil(ziskejKlicTydne());
+  var novy = prompt("Nový týdenní cíl (počet tréninků):", c.cilTreninku);
+  if(novy === null) return;
+  var n = parseInt(novy,10);
+  if(isNaN(n) || n<=0) return;
+  c.cilTreninku = n;
+  ulozStavLokalne();
+  vykresliDomovskouObrazovku();
+}
+
+/* ================== NASTAVENI / PROFIL ================== */
+function vykresliNastaveni(){
+  document.getElementById("profile-name").textContent = STATE.user ? STATE.user.jmeno : "?";
+
+  var cvikyBody = document.getElementById("sec-cviky-body");
+  cvikyBody.innerHTML = "";
+  STATE.cviky.slice(0,6).forEach(function(c){
+    var row = document.createElement("div");
+    row.className = "leader-row";
+    row.innerHTML = "<span class='lr-label'>" + escapujHtml(c) + "</span><span class='leader'></span>";
+    cvikyBody.appendChild(row);
+  });
+  if(STATE.cviky.length > 6){
+    var more = document.createElement("div");
+    more.style.cssText = "font-size:12px;color:var(--text-secondary);";
+    more.textContent = "+ " + (STATE.cviky.length - 6) + " dalších — klepni na + pro zobrazení všech";
+    cvikyBody.appendChild(more);
+  }
+
+  var vahaBody = document.getElementById("sec-vaha-body");
+  vahaBody.innerHTML = "";
+  var poslVahy = STATE.vahy.slice().sort(function(a,b){ return novyDatumTimestamp(b.datum)-novyDatumTimestamp(a.datum); }).slice(0,6);
+  if(poslVahy.length === 0){ vahaBody.innerHTML = "<div class='empty-state' style='padding:8px 0;'>Zatím žádné záznamy.</div>"; }
+  else poslVahy.forEach(function(v){
+    var row = document.createElement("div");
+    row.className = "leader-row";
+    row.innerHTML = "<span class='lr-label'>" + formatujDatumCz(v.datum) + "</span><span class='leader'></span><span class='lr-val'>" + v.kg + "kg</span>";
+    vahaBody.appendChild(row);
+  });
+
+  var gymBody = document.getElementById("sec-posilovny-body");
+  gymBody.innerHTML = "";
+  STATE.posilovny.forEach(function(g, i){
+    var row = document.createElement("div");
+    row.style.cssText = "display:flex;align-items:center;gap:8px;font-size:14px;";
+    var vychoziTag = (STATE.nastaveni.defaultGym === g) ? "<span class='tag-pill'>výchozí</span>" : "";
+    row.innerHTML = "<button class='mini-btn' onclick=\"smazZDatabaze('gym'," + i + ")\">" + ICON_MINUS + "</button><span style='flex:1;'>" + escapujHtml(g) + "</span>" + vychoziTag;
+    gymBody.appendChild(row);
+  });
+  var addGymRow = document.createElement("div");
+  addGymRow.className = "inline-add-row";
+  addGymRow.innerHTML = "<input type='text' id='add-gym-inp' class='ios-input' placeholder='Nová posilovna...' style='padding:9px;'>";
+  gymBody.appendChild(addGymRow);
+
+  var notesBody = document.getElementById("sec-poznamky-body");
+  notesBody.innerHTML = "";
+  if(STATE.poznamky.length === 0){ notesBody.innerHTML = "<div class='empty-state' style='padding:8px 0;'>Žádné soubory.</div>"; }
+  else STATE.poznamky.slice(0,8).forEach(function(p){
+    var row = document.createElement("div");
+    row.className = "leader-row";
+    row.innerHTML = "<span class='lr-label'>" + formatujDatumCz(p.datum) + "</span><span class='leader'></span><span class='lr-val' style='text-decoration:underline;'>" + escapujHtml(p.nazev) + "</span>";
+    notesBody.appendChild(row);
+  });
+
+  var fotoGrid = document.getElementById("photo-preview-grid");
+  fotoGrid.innerHTML = "";
+  STATE.fotky.slice(0,6).forEach(function(f){
+    var img = document.createElement("img");
+    img.src = f.data; img.style.cssText = "width:100%;aspect-ratio:1;border-radius:10px;object-fit:cover;background:var(--card-bg);";
+    fotoGrid.appendChild(img);
+  });
+
+  document.querySelectorAll(".theme-dot").forEach(function(dot){
+    dot.classList.toggle("active", dot.getAttribute("data-color") === STATE.nastaveni.theme);
+  });
+
+  naplnSelecty();
+}
+
+function vykresliCvikyPodstranku(){
+  var box = document.getElementById("cviky-full-list");
+  box.innerHTML = "";
+  STATE.cviky.forEach(function(c, i){
+    var row = document.createElement("div");
+    row.style.cssText = "display:flex;align-items:center;gap:10px;background:var(--card-bg-secondary);padding:12px 14px;border-radius:12px;font-size:14px;";
+    row.innerHTML = "<button class='mini-btn' onclick=\"smazZDatabaze('cvik'," + i + ")\">" + ICON_MINUS + "</button><span style='flex:1;'>" + escapujHtml(c) + "</span>";
+    box.appendChild(row);
+  });
+}
+
+function zeptejSeNaVahu(){
+  var kg = prompt("Zadej aktuální váhu (kg):");
+  if(kg === null) return;
+  var n = parseFloat(kg);
+  if(isNaN(n) || n<=0){ zobrazToast("Neplatná hodnota."); return; }
+  STATE.vahy.unshift({ datum: novyDatumString(), kg: n });
+  ulozStavLokalne(); vykresliNastaveni();
+  zobrazToast("Váha zapsána: " + n + " kg");
+}
+function zeptejSeNaPosilovnu(){
+  var v = prompt("Název nové posilovny:");
+  if(v === null || !v.trim()) return;
+  if(STATE.posilovny.indexOf(v.trim()) >= 0){ zobrazToast("Posilovna už existuje."); return; }
+  STATE.posilovny.push(v.trim());
+  ulozStavLokalne(); vykresliNastaveni();
+}
+
+function zmenTheme(barva){
+  STATE.nastaveni.theme = barva;
+  aplikujTheme(barva);
+  document.querySelectorAll(".theme-dot").forEach(function(dot){ dot.classList.toggle("active", dot.getAttribute("data-color")===barva); });
+  ulozStavLokalne();
+}
+function aplikujTheme(barva){
+  document.documentElement.style.setProperty("--accent-color", barva);
+  document.documentElement.style.setProperty("--accent-color-dim", barva + "26");
+}
+function prepniVychoziRezim(){
+  STATE.nastaveni.liveMode = document.getElementById("live-mode-switch").checked;
+  ulozStavLokalne();
+}
+function ulozDefaultGym(){
+  STATE.nastaveni.defaultGym = document.getElementById("settings-default-gym").value;
+  ulozStavLokalne(); naplnSelecty(); vykresliNastaveni();
+}
+function nahrajProgresFoto(){
+  var input = document.getElementById("photo-input");
+  var soubor = input.files[0]; if(!soubor) return;
+  var reader = new FileReader();
+  reader.onload = function(e){
+    STATE.fotky.unshift({ datum: novyDatumString(), data: e.target.result });
+    if(STATE.fotky.length > 24) STATE.fotky = STATE.fotky.slice(0,24);
+    ulozStavLokalne(); vykresliNastaveni();
+    zobrazToast("Foto přidáno.");
+  };
+  reader.readAsDataURL(soubor); input.value = "";
+}
+function pridatPoznamku(){
+  var input = document.getElementById("note-input");
+  var soubor = input.files[0]; if(!soubor) return;
+  STATE.poznamky.unshift({ datum: novyDatumString(), nazev: soubor.name });
+  ulozStavLokalne(); vykresliNastaveni(); input.value = "";
+}
+function pridatDoDatabaze(typ){
+  if(typ === "cvik"){
+    var inp = document.getElementById("add-cvik-inp");
+    var v = inp.value.trim(); if(!v) return;
+    if(STATE.cviky.indexOf(v) >= 0){ zobrazToast("Cvik už existuje."); return; }
+    STATE.cviky.push(v); inp.value = "";
+    ulozStavLokalne(); vykresliCvikyPodstranku(); vykresliNastaveni();
+  } else {
+    var inp2 = document.getElementById("add-gym-inp");
+    if(!inp2) return;
+    var v2 = inp2.value.trim(); if(!v2) return;
+    if(STATE.posilovny.indexOf(v2) >= 0){ zobrazToast("Posilovna už existuje."); return; }
+    STATE.posilovny.push(v2);
+    ulozStavLokalne(); vykresliNastaveni();
+  }
+}
+function smazZDatabaze(typ, index){
+  if(typ === "cvik"){ STATE.cviky.splice(index,1); vykresliCvikyPodstranku(); }
+  else { STATE.posilovny.splice(index,1); }
+  ulozStavLokalne(); vykresliNastaveni(); naplnSelecty();
+}
+
+/* ================== SYNC / EXPORT / IMPORT ================== */
+function synchronizujCloud(){
+  var status = document.getElementById("sync-status");
+  status.textContent = "Synchronizuji...";
+  var neodeslane = STATE.treninky.filter(function(t){ return !t.synced; });
+  var radky = [];
+  neodeslane.forEach(function(t){
+    t.cviky.forEach(function(c){
+      c.serie.forEach(function(s, i){
+        radky.push({
+          ID_Treninku: t.id, Datum: t.datum, Cas_Startu: "", Celkovy_Cas: t.celkovyCasSec,
+          Posilovna: t.posilovna, Typ_Treninku: t.nazev, Cvik: c.nazev, Serie_Cislo: i+1,
+          Cil_Opakovani: s.opak, Cas_Serie_TUT: s.casSerieSec, Cas_Pauzy: s.casPauzySec,
+          Vaha_Kg: s.vaha, Uzivatel: STATE.user ? STATE.user.jmeno : ""
+        });
+      });
+    });
+  });
+  var payload = {
+    action: "sync", uzivatel: STATE.user ? STATE.user.jmeno : "", pin: STATE.user ? STATE.user.pin : "",
+    live_treninky: radky,
+    vahy: STATE.vahy.map(function(v){ return { Datum: v.datum, Vaha_Kg: v.kg, Uzivatel: STATE.user ? STATE.user.jmeno : "" }; }),
+    databaze_cviku: STATE.cviky, databaze_posiloven: STATE.posilovny
+  };
+  fetch(GAS_URL, { method:"POST", body: JSON.stringify(payload), headers: {"Content-Type":"text/plain"} })
+    .then(function(r){ return r.json ? r.json() : {ok:true}; })
+    .then(function(){
+      neodeslane.forEach(function(t){ t.synced = true; });
+      ulozStavLokalne();
+      status.textContent = "Naposledy synchronizováno: " + new Date().toLocaleTimeString("cs-CZ");
+      zobrazToast("Synchronizace dokončena ✅");
+    })
+    .catch(function(err){
+      console.warn("Sync chyba", err);
+      status.textContent = "Synchronizace selhala, zkus to znovu.";
+      zobrazToast("Chyba synchronizace ⚠️");
+    });
+}
+
+function exportujCSV(){
+  var radky = [["ID_Treninku","Datum","Celkovy_Cas_s","Posilovna","Typ_Treninku","Cvik","Serie_Cislo","Opakovani","Vaha_Kg","Cas_Serie_s","Cas_Pauzy_s"]];
+  STATE.treninky.forEach(function(t){
+    t.cviky.forEach(function(c){
+      c.serie.forEach(function(s, i){
+        radky.push([t.id, t.datum, t.celkovyCasSec, t.posilovna, t.nazev, c.nazev, i+1, s.opak, s.vaha===null?"":s.vaha, s.casSerieSec||"", s.casPauzySec||""]);
+      });
+    });
+  });
+  var csv = radky.map(function(r){ return r.map(csvPole).join(","); }).join("\n");
+  var blob = new Blob([csv], { type:"text/csv;charset=utf-8;" });
+  var odkaz = document.createElement("a");
+  odkaz.href = URL.createObjectURL(blob); odkaz.download = "gymbro_v5_backup.csv";
+  document.body.appendChild(odkaz); odkaz.click(); document.body.removeChild(odkaz);
+  zobrazToast("CSV export stažen.");
+}
+function csvPole(v){
+  var s = String(v);
+  if(s.indexOf(",")>=0 || s.indexOf('"')>=0){ s = '"' + s.replace(/"/g,'""') + '"'; }
+  return s;
+}
+function importujCSV(input){
+  var soubor = input.files[0]; if(!soubor) return;
+  var reader = new FileReader();
+  reader.onload = function(e){
+    var text = e.target.result;
+    var radky = text.split(/\r?\n/).filter(function(r){ return r.trim().length>0; });
+    radky.shift();
+    var podleId = {};
+    radky.forEach(function(radek){
+      var pole = rozparsujCsvRadek(radek);
+      if(pole.length < 11) return;
+      var id = pole[0];
+      if(!podleId[id]){ podleId[id] = { id:id, datum:pole[1], celkovyCasSec:parseInt(pole[2],10)||0, posilovna:pole[3], nazev:pole[4], mod:"text", cviky:[], synced:true }; }
+      var t = podleId[id];
+      var cvikNazev = pole[5];
+      var cvik = t.cviky.find(function(c){ return c.nazev===cvikNazev; });
+      if(!cvik){ cvik = { nazev:cvikNazev, serie:[] }; t.cviky.push(cvik); }
+      cvik.serie.push({ opak:parseInt(pole[7],10)||0, vaha: pole[8]===""?null:parseFloat(pole[8]), casSerieSec:parseInt(pole[9],10)||0, casPauzySec:parseInt(pole[10],10)||0 });
+    });
+    var noveTreninky = Object.keys(podleId).map(function(k){ return podleId[k]; });
+    var existujiciId = STATE.treninky.map(function(t){ return t.id; });
+    noveTreninky.forEach(function(t){ if(existujiciId.indexOf(t.id) < 0) STATE.treninky.push(t); });
+    ulozStavLokalne(); vykresliHistorii(); vykresliDomovskouObrazovku();
+    zobrazToast("Import dokončen: " + noveTreninky.length + " tréninků.");
+  };
+  reader.readAsText(soubor); input.value = "";
+}
+function rozparsujCsvRadek(radek){
+  var vysledek = [], aktualni = "", vUvozovkach = false;
+  for(var i=0;i<radek.length;i++){
+    var znak = radek[i];
+    if(znak === '"'){ if(vUvozovkach && radek[i+1]==='"'){ aktualni+='"'; i++; } else vUvozovkach=!vUvozovkach; }
+    else if(znak === ',' && !vUvozovkach){ vysledek.push(aktualni); aktualni=""; }
+    else aktualni += znak;
+  }
+  vysledek.push(aktualni);
+  return vysledek;
+}
+
+/* ================== POMOCNE FUNKCE ================== */
+function novyDatumString(){ var d=new Date(); return d.getFullYear()+"-"+pad2(d.getMonth()+1)+"-"+pad2(d.getDate()); }
+function pad2(n){ return n<10 ? "0"+n : ""+n; }
+function novyDatumObjekt(datumStr){ var p=datumStr.split("-"); return new Date(parseInt(p[0],10),parseInt(p[1],10)-1,parseInt(p[2],10)); }
+function novyDatumTimestamp(datumStr){ return novyDatumObjekt(datumStr).getTime(); }
+function formatujDatumCz(datumStr){ var d=novyDatumObjekt(datumStr); return pad2(d.getDate())+"."+pad2(d.getMonth()+1)+"."+d.getFullYear()+"."; }
+function formatujCasMMSS(sekund){ var m=Math.floor(sekund/60), s=sekund%60; return m+":"+pad2(s); }
+function formatujCasHMS(sekund){ var h=Math.floor(sekund/3600), m=Math.floor((sekund%3600)/60), s=sekund%60; return pad2(h)+":"+pad2(m)+":"+pad2(s); }
+function formatujCasHM(sekund){ if(!sekund) return "0m"; var h=Math.floor(sekund/3600), m=Math.floor((sekund%3600)/60); if(h>0) return h+"h"+(m>0?pad2(m)+"min":""); return m+"min"; }
+function escapujHtml(s){ var d=document.createElement("div"); d.textContent=String(s); return d.innerHTML; }
+var toastTimeout = null;
+function zobrazToast(text){
+  var t = document.getElementById("toast");
+  t.textContent = text; t.classList.add("show");
+  if(toastTimeout) clearTimeout(toastTimeout);
+  toastTimeout = setTimeout(function(){ t.classList.remove("show"); }, 2200);
+}
+
+/* ---------- INIT ---------- */
+(function init(){
+  try{
+    var raw = localStorage.getItem("gymbro_state_v2");
+    if(raw){ var parsed = JSON.parse(raw); if(parsed && parsed.user){ zprovoznitAplikaci(); } }
+  }catch(e){}
+  document.getElementById("pin-input").addEventListener("keydown", function(ev){ if(ev.key==="Enter") overitPin(); });
+})();
+</script>
+</body>
+</html>
