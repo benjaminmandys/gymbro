@@ -36,6 +36,7 @@ a{color:var(--accent-color);}
 /* ---------- LOGIN ---------- */
 #login-screen{position:fixed;inset:0;background:var(--bg-color);z-index:9999;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:32px;}
 #login-screen .logo{font-size:52px;margin-bottom:6px;}
+#login-logo-img{width:72px;height:72px;object-fit:cover;border-radius:18px;display:block;}
 #login-error{color:var(--red);font-size:13px;height:16px;margin-top:10px;}
 
 /* ---------- SHARED LAYOUT ---------- */
@@ -59,7 +60,7 @@ a{color:var(--accent-color);}
 .page{position:fixed;top:0;left:0;width:100vw;height:100vh;background:var(--bg-color);z-index:100;display:flex;flex-direction:column;transform:translateY(100%);transition:transform .32s cubic-bezier(.1,.76,.55,.94);}
 .page.active{transform:translateY(0);}
 .page-header{display:flex;align-items:center;gap:10px;padding:calc(env(safe-area-inset-top) + 14px) 18px 8px 18px;}
-.page-title{font-size:22px;font-weight:800;flex:1;font-family:'Work Sans',sans-serif;}
+.page-title{font-size:22px;font-weight:600;flex:1;font-family:'Work Sans',sans-serif;}
 .chevron-back{background:none;border:none;color:var(--text-color);}
 .chevron-back svg{width:24px;height:24px;}
 
@@ -67,7 +68,7 @@ a{color:var(--accent-color);}
 .ring-wrap{width:220px;height:220px;flex-shrink:0;align-self:center;border-radius:50%;position:relative;margin:10px auto 6px auto;display:flex;align-items:center;justify-content:center;}
 .ring-wrap::before{content:"";position:absolute;inset:16px;background:var(--bg-color);border-radius:50%;}
 .ring-content{position:relative;z-index:2;text-align:center;width:130px;padding:0 6px;}
-.ring-content .rc-big{font-size:38px;font-weight:800;line-height:1;font-family:'Work Sans',sans-serif;}
+.ring-content .rc-big{font-size:38px;font-weight:600;line-height:1;font-family:'Work Sans',sans-serif;}
 .ring-content .rc-sub{font-size:11px;color:var(--text-secondary);margin-top:5px;line-height:1.25;}
 .ring-content .rc-frac{font-size:11px;color:var(--text-secondary);margin-top:5px;line-height:1.25;}
 .change-goal-btn{display:block;margin:0 auto 4px auto;background:none;border:none;color:var(--accent-color);font-size:12px;font-weight:700;text-decoration:underline;padding:6px;}
@@ -78,7 +79,7 @@ a{color:var(--accent-color);}
 
 /* ---------- CARDS ---------- */
 .ios-card{background:var(--card-bg);border-radius:18px;padding:16px;display:flex;flex-direction:column;gap:6px;}
-.ios-card h3{font-size:14px;}
+.ios-card h3{font-size:14px;font-weight:600;font-family:'Work Sans',sans-serif;}
 .label-sm{font-size:11px;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.4px;}
 
 /* collapsible workout card (home + history) */
@@ -102,7 +103,7 @@ a{color:var(--accent-color);}
 /* collapsible settings section */
 .sec-card{background:var(--card-bg-secondary);border-radius:18px;}
 .sec-head{display:flex;align-items:center;gap:8px;padding:14px 16px;cursor:pointer;min-height:48px;box-sizing:border-box;}
-.sec-head .sec-title{flex:1;font-size:14px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;}
+.sec-head .sec-title{flex:1;font-size:14px;font-weight:600;text-transform:uppercase;letter-spacing:.4px;font-family:'Work Sans',sans-serif;}
 .sec-head .sec-add{width:26px;height:26px;border-radius:50%;background:var(--card-bg);border:none;color:var(--accent-color);display:flex;align-items:center;justify-content:center;}
 .sec-head .sec-chevron{width:18px;height:18px;color:var(--text-secondary);transition:transform .2s;}
 .sec-card.open .sec-chevron{transform:rotate(90deg);}
@@ -160,7 +161,7 @@ input:checked + .slider:before{transform:translateX(20px);}
 .compare-caption{text-align:center;font-size:11px;color:var(--text-secondary);}
 
 /* ---------- LIVE WORKOUT ---------- */
-.editable-title{display:flex;align-items:center;justify-content:center;gap:8px;font-size:26px;font-weight:800;text-align:center;font-family:'Work Sans',sans-serif;}
+.editable-title{display:flex;align-items:center;justify-content:center;gap:8px;font-size:26px;font-weight:600;text-align:center;font-family:'Work Sans',sans-serif;}
 .editable-title button{background:none;border:none;color:var(--text-secondary);}
 .editable-title button svg{width:16px;height:16px;}
 .editable-sub{display:flex;align-items:center;justify-content:center;gap:6px;font-size:13px;color:var(--text-secondary);text-align:center;margin-top:2px;}
@@ -168,7 +169,7 @@ input:checked + .slider:before{transform:translateX(20px);}
 .editable-sub button svg{width:13px;height:13px;}
 
 .live-pill{background:var(--accent-color);color:var(--accent-text);border-radius:44px;width:min(240px,70vw);padding:20px 10px;margin:16px auto;text-align:center;border:none;}
-.live-pill .lp-time{font-size:38px;font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:.5px;font-family:'Work Sans',sans-serif;}
+.live-pill .lp-time{font-size:38px;font-weight:600;font-variant-numeric:tabular-nums;letter-spacing:.5px;font-family:'Work Sans',sans-serif;}
 .live-pill .lp-total{font-size:11px;font-weight:700;letter-spacing:.4px;margin-top:2px;}
 
 .timeline-row{background:var(--card-bg-secondary);border-radius:12px;padding:11px 14px;display:flex;justify-content:space-between;font-size:14px;margin-bottom:6px;}
@@ -216,11 +217,16 @@ input:checked + .slider:before{transform:translateX(20px);}
 <body>
 
 <div id="login-screen">
-  <div class="logo">🏋️‍♂️</div>
-  <h1 style="font-size:34px;font-weight:800;margin-bottom:8px;font-family:'Work Sans',sans-serif;">GymBro</h1>
+  <div class="logo">
+    <span id="login-logo-emoji">🏋️‍♂️</span>
+    <img id="login-logo-img" class="hidden" alt="Logo" src="logo.webp"
+         onload="document.getElementById('login-logo-emoji').classList.add('hidden'); this.classList.remove('hidden');"
+         onerror="this.classList.add('hidden'); document.getElementById('login-logo-emoji').classList.remove('hidden');">
+  </div>
+  <h1 style="font-size:34px;font-weight:600;margin-bottom:8px;font-family:'Work Sans',sans-serif;">GymBro</h1>
   <p style="color:var(--text-secondary);margin-bottom:24px;font-size:13px;">Zadej jméno a kód. Poprvé tě ověříme online, pak už appka funguje i offline.</p>
-  <input type="text" id="name-input" class="ios-input" placeholder="Tvoje jméno" maxlength="30" style="max-width:220px;text-align:center;margin-bottom:12px;">
-  <input type="password" inputmode="numeric" pattern="[0-9]*" id="pin-input" class="ios-input" placeholder="••••" maxlength="4" style="max-width:200px;text-align:center;font-size:26px;letter-spacing:8px;margin-bottom:16px;">
+  <input type="text" id="name-input" class="ios-input" placeholder="Tvoje jméno" maxlength="30" style="max-width:220px;width:220px;height:52px;box-sizing:border-box;text-align:center;margin-bottom:12px;">
+  <input type="password" inputmode="numeric" pattern="[0-9]*" id="pin-input" class="ios-input" placeholder="••••" maxlength="4" style="max-width:220px;width:220px;height:52px;box-sizing:border-box;text-align:center;font-size:26px;letter-spacing:8px;margin-bottom:16px;">
   <button onclick="overitPin()" class="ios-btn" style="max-width:200px;">Vstoupit</button>
   <div id="login-error"></div>
 </div>
@@ -588,7 +594,7 @@ var ICON_TRASH = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" str
    GYMBRO - kompletni logika aplikace
    ========================================================= */
 
-var GAS_URL = "https://script.google.com/macros/s/AKfycbwVRUl8mVYYg7aqV3jdATQsaGyNBb2Qhfh2NpYof61eH2YuftVFO-ubATuDLlFGxPNZPA/exec";
+var GAS_URL = "https://script.google.com/macros/s/AKfycbw2wSh1AqWVF8ghJm57ZeSEwZLZy1w0FZdZlezqrnyQg4Sa_pKeD7PgzDB9mxOdOcCLPw/exec";
 var VYCHOZI_CVIKY = ["Chin Up","Bicep Hammer","Tricep Pulldown","Chest Press","Bench","Leg Press","Reverse Fly"];
 var VYCHOZI_POSILOVNY = ["Big One Fitness Brno Václavská","FormFactory Brno Veveří","Fitcentrum Olympia Tišnov"];
 
@@ -614,7 +620,16 @@ var OTEVRENE_KARTY = {};
 
 /* ---------- PERSISTENCE ---------- */
 function ulozStavLokalne(){
-  try{ localStorage.setItem("gymbro_state_v2", JSON.stringify(STATE)); }catch(e){ console.warn("Ulozeni selhalo", e); }
+  try{
+    localStorage.setItem("gymbro_state_v2", JSON.stringify(STATE));
+  }catch(e){
+    console.warn("Ulozeni selhalo", e);
+    if(e && e.name === "QuotaExceededError"){
+      zobrazToast("⚠️ Úložiště telefonu je plné, tahle změna se NEULOŽILA. Smaž pár progres fotek nebo si stáhni a smaž zálohu.");
+    } else {
+      zobrazToast("⚠️ Uložení selhalo, zkus to prosím znovu.");
+    }
+  }
 }
 function nactiStavLokalne(){
   try{
@@ -713,6 +728,11 @@ function prihlasUzivatele(jmeno, pin){
   STATE.user = { pin: pin, jmeno: jmeno };
   ulozStavLokalne();
   zprovoznitAplikaci();
+  bezpecne(function(){
+    if(typeof navigator === "undefined" || navigator.onLine !== false){
+      synchronizujCloud();
+    }
+  });
 }
 
 function overitNovehoUzivateleOnline(jmeno, pin){
@@ -731,8 +751,10 @@ function overitNovehoUzivateleOnline(jmeno, pin){
         if(!STATE.overeniUzivatele) STATE.overeniUzivatele = [];
         STATE.overeniUzivatele.push({ jmeno: potvrzeneJmeno, pin: pin });
         prihlasUzivatele(potvrzeneJmeno, pin);
+      } else if(data && data.ok === false){
+        chyba.textContent = data.error ? ("Kontaktuj Bena: " + data.error) : "Jméno a kód nesedí se seznamem uživatelů. Zkontroluj překlepy, nebo se ozvi Benovi.";
       } else {
-        chyba.textContent = "Jméno a kód nesedí se seznamem uživatelů. Zkontroluj překlepy, nebo se ozvi Benovi.";
+        chyba.textContent = "Kontaktuj Bena. Odpověď ze skriptu nebyla JSON (" + txt.slice(0,80) + ") — zkontroluj nasazení Apps Scriptu.";
       }
     })
     .catch(function(){
@@ -1646,6 +1668,7 @@ function jeBarvaSvetla(hex){
   var jas = (0.299*r + 0.587*g + 0.114*b);
   return jas > 150;
 }
+
 function prepniVychoziRezim(){
   STATE.nastaveni.liveMode = document.getElementById("live-mode-switch").checked;
   ulozStavLokalne();
@@ -1656,17 +1679,43 @@ function nastavVychoziPosilovnu(gym){
   ulozStavLokalne(); naplnSelecty(); vykresliNastaveni();
   zobrazToast("Výchozí posilovna: " + gym);
 }
+/* Zmensi obrazek pres canvas na rozumnou velikost pred ulozenim do
+   localStorage - telefonni fotky umeji mit v base64 klidne 5-10 MB,
+   coz rychle vycerpa limit uloziste (typicky ~5-10 MB na celou appku
+   dohromady). Po zmenseni na max. 900px a JPEG kvalitu .75 vyjde
+   fotka typicky na desitky-nizke stovky KB. */
+function zmensiObrazek(soubor, maxRozmer, kvalita, callback){
+  var reader = new FileReader();
+  reader.onload = function(e){
+    var img = new Image();
+    img.onload = function(){
+      var w = img.width, h = img.height;
+      if(w > h && w > maxRozmer){ h = Math.round(h * (maxRozmer / w)); w = maxRozmer; }
+      else if(h >= w && h > maxRozmer){ w = Math.round(w * (maxRozmer / h)); h = maxRozmer; }
+      var canvas = document.createElement("canvas");
+      canvas.width = w; canvas.height = h;
+      canvas.getContext("2d").drawImage(img, 0, 0, w, h);
+      try{ callback(canvas.toDataURL("image/jpeg", kvalita)); }
+      catch(err){ callback(e.target.result); }
+    };
+    img.onerror = function(){ callback(e.target.result); };
+    img.src = e.target.result;
+  };
+  reader.onerror = function(){ callback(null); };
+  reader.readAsDataURL(soubor);
+}
+
 function nahrajProgresFoto(){
   var input = document.getElementById("photo-input");
   var soubor = input.files[0]; if(!soubor) return;
-  var reader = new FileReader();
-  reader.onload = function(e){
-    STATE.fotky.unshift({ id: novaId("f"), datum: novyDatumString(), data: e.target.result });
+  zmensiObrazek(soubor, 900, 0.75, function(data){
+    input.value = "";
+    if(!data){ zobrazToast("Foto se nepodařilo zpracovat."); return; }
+    STATE.fotky.unshift({ id: novaId("f"), datum: novyDatumString(), data: data });
     if(STATE.fotky.length > 24) STATE.fotky = STATE.fotky.slice(0,24);
     ulozStavLokalne(); vykresliNastaveni();
     zobrazToast("Foto přidáno.");
-  };
-  reader.readAsDataURL(soubor); input.value = "";
+  });
 }
 function smazFoto(id){
   zobrazPotvrzeni("Opravdu smazat fotku?", "Toto progres foto bude nenávratně odstraněno.", function(ano){
@@ -1773,6 +1822,7 @@ function synchronizujCloud(){
       ulozStavLokalne();
       status.textContent = "Naposledy synchronizováno: " + new Date().toLocaleTimeString("cs-CZ") + " (" + neodeslane.length + " tréninků, " + neodeslaneCile.length + " cílů)";
       zobrazToast("Synchronizace dokončena ✅");
+      return Promise.all([stahniSeznamUzivatele("cviky", STATE.cviky, "cvik"), stahniSeznamUzivatele("posilovny", STATE.posilovny, "posilovna")]);
     })
     .catch(function(err){
       console.warn("Sync chyba", err);
@@ -1780,6 +1830,35 @@ function synchronizujCloud(){
       status.textContent = "Chyba: " + zprava;
       zobrazToast("Synchronizace selhala ⚠️");
     });
+}
+
+/* Kazdy uzivatel ma v tabulce svuj VLASTNI seznam cviku i posiloven
+   (rozliseny sloupcem Uzivatel). Po uspesnem nahrani tedy jeste
+   stahneme, co uzivatel ma ulozeno pod svym jmenem, a doplnime do
+   lokalniho seznamu cokoliv chybejiciho (napr. kdyz stejny clovek
+   pridaval veci na jinem zarizeni). Akce v Code.gs: "cviky" / "posilovny". */
+function stahniSeznamUzivatele(akce, cilovePole, popisek){
+  if(!STATE.user || !GAS_URL || GAS_URL.indexOf("http") !== 0) return Promise.resolve();
+  return fetch(GAS_URL + "?action=" + akce + "&jmeno=" + encodeURIComponent(STATE.user.jmeno))
+    .then(function(r){ return r.text(); })
+    .then(function(txt){
+      var data = null;
+      try{ data = JSON.parse(txt); }catch(e){}
+      var polozky = data ? (data[akce] || data.seznam) : null;
+      if(!data || !data.ok || !Array.isArray(polozky)) return;
+      var pridano = 0;
+      polozky.forEach(function(p){
+        if(p && cilovePole.indexOf(p) < 0){ cilovePole.push(p); pridano++; }
+      });
+      if(pridano > 0){
+        ulozStavLokalne();
+        bezpecne(vykresliNastaveni);
+        bezpecne(vykresliCvikyPodstranku);
+        bezpecne(naplnSelecty);
+        zobrazToast(pridano + "× nová " + popisek + " stažena z cloudu.");
+      }
+    })
+    .catch(function(e){ console.warn("Stažení (" + akce + ") selhalo", e); });
 }
 
 function exportujCSV(){
@@ -1987,11 +2066,19 @@ document.getElementById("modal-overlay").addEventListener("click", function(ev){
 /* ---------- INIT ---------- */
 (function init(){
   try{
-    var raw = localStorage.getItem("gymbro_state_v2");
-    if(raw){ var parsed = JSON.parse(raw); if(parsed && parsed.user){ zprovoznitAplikaci(); } }
-  }catch(e){}
+    nactiStavLokalne();
+    if(STATE.user){ zprovoznitAplikaci(); }
+  }catch(e){ console.warn("Init selhal", e); }
   document.getElementById("pin-input").addEventListener("keydown", function(ev){ if(ev.key==="Enter") overitPin(); });
   document.getElementById("name-input").addEventListener("keydown", function(ev){ if(ev.key==="Enter") overitPin(); });
+
+  // Pokud appka behem offline chvile zustane otevrena (i na pozadi), po
+  // navrateni signalu se sama pokusi synchronizovat. Tohle NEFUNGUJE,
+  // kdyz je appka uplne zavrena/vypnuta - to bez sluzby na pozadi (kterou
+  // navic iOS Safari nepodporuje) neni mozne.
+  window.addEventListener("online", function(){
+    if(STATE.user){ bezpecne(synchronizujCloud); }
+  });
 })();
 </script>
 </body>
